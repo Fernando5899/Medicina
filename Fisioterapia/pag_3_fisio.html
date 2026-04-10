@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historia Clínica Fisioterapéutica - Pág 3 (Actualizada)</title>
+    <style>
+        /* =========================================
+           CONFIGURACIONES GENERALES
+           ========================================= */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --utc-blue: #1F4287;
+            --utc-light-blue: #5575B3;
+        }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #525659;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* CONTROLES FUERA DE LA HOJA */
+        .controls-bar {
+            width: 100%;
+            max-width: 215.9mm;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+        .btn-clear {
+            padding: 8px 15px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: background 0.3s;
+        }
+        .btn-clear:hover { background-color: #c0392b; }
+
+        /* LA HOJA TAMAÑO CARTA */
+        .page {
+            background-color: #fff;
+            width: 100%;
+            max-width: 215.9mm;
+            min-height: 279.4mm;
+            padding: 12mm 15mm;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            color: var(--utc-blue);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        /* MARCA DE AGUA "utc" */
+        .page::before {
+            content: "utc";
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 280px;
+            font-weight: 900;
+            color: rgba(230, 235, 240, 0.4);
+            z-index: -1;
+            pointer-events: none;
+            letter-spacing: -15px;
+        }
+
+        /* =========================================
+           ESTRUCTURA DE CAJAS
+           ========================================= */
+        .box {
+            border: 1.5px solid var(--utc-blue);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            background: transparent;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .box-title {
+            background-color: var(--utc-blue);
+            color: white;
+            font-size: 14.5px;
+            font-weight: bold;
+            text-align: center;
+            padding: 6px 0;
+            width: 100%;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            margin: 0;
+            border-bottom: 1.5px solid var(--utc-blue);
+        }
+
+        .box-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: transparent;
+        }
+
+        /* Split superior (Sensibilidad y Neuro) */
+        .row-split {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        /* =========================================
+           TEXTAREAS Y ENTRADAS DE TEXTO
+           ========================================= */
+        .free-text {
+            border: none !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            font-size: 12px;
+            color: #333;
+            outline: none !important;
+            resize: none;
+            width: 100%;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            padding: 4px 6px;
+            box-sizing: border-box;
+            display: block;
+        }
+
+        /* =========================================
+           TABLAS GENERALES
+           ========================================= */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            height: 100%;
+            margin: 0;
+        }
+        th {
+            color: var(--utc-blue);
+            font-size: 12.5px;
+            font-weight: bold;
+            padding: 7px 4px;
+            border: 1px solid var(--utc-blue);
+        }
+        td {
+            border: 1px solid var(--utc-blue);
+            padding: 0;
+            vertical-align: middle;
+        }
+
+        tr:first-child th, tr:first-child td { border-top: none; }
+        tr:last-child td { border-bottom: none; }
+        th:first-child, td:first-child { border-left: none; }
+        th:last-child, td:last-child { border-right: none; }
+
+        /* -------------------------------------
+           SECCIÓN 1: EXPLORACIÓN SENSIBILIDAD
+        -------------------------------------- */
+        .sensibilidad-box { width: 40%; }
+        .image-marker-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            min-height: 230px;
+            cursor: crosshair;
+            padding: 10px;
+            background-color: #fff;
+        }
+        .image-marker-container img {
+            max-width: 100%;
+            max-height: 220px;
+            object-fit: contain;
+        }
+        .marker {
+            position: absolute;
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 16px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        /* -------------------------------------
+           SECCIÓN 2: EXPLORACIÓN NEUROMUSCULAR
+        -------------------------------------- */
+        .neuro-box { width: 60%; }
+        .neuro-box td textarea { min-height: 38px; }
+        /* Ajuste de anchos para darle más espacio a Reflejos */
+        .col-hallazgos { width: 22%; font-size: 12px;}
+        .lbl-reflejo { color: var(--utc-blue); font-size: 12.5px; width: 18%; text-align: center; padding: 8px; }
+        .col-tono { width: 22%; font-size: 12px;}
+
+        /* -------------------------------------
+           SECCIÓN 3: MOVILIDAD
+        -------------------------------------- */
+        .movilidad-box { flex: none; }
+        .movilidad-table td { height: 32px; }
+        .movilidad-table th { font-size: 12px; }
+
+        .lbl-movimiento { color: var(--utc-blue); font-size: 11.5px; width: 16%; padding: 0 8px; }
+        .lbl-zona { color: var(--utc-blue); font-size: 12px; font-weight: bold; padding: 0 8px; text-align: left;}
+
+        /* Ajuste para las celdas divididas de Fuerza y Arco */
+        .inp-fuerza-arco { width: 17%; }
+        .sub-col { width: 8.5%; }
+
+        .divider-right { border-right: 1.5px solid var(--utc-blue) !important; }
+
+        .obs-row { text-align: left !important; padding: 4px 8px !important; vertical-align: top;}
+        .obs-label { color: var(--utc-blue); font-weight: bold; font-size: 11.5px; float: left; margin-right: 5px; margin-top: 4px;}
+        .obs-row textarea { min-height: 40px; padding: 2px; display: inline-block; width: calc(100% - 95px);}
+
+        .nota-footer { font-size: 9.5px; color: var(--utc-blue); text-align: left !important; padding: 5px 8px !important; border-top: 1px solid var(--utc-blue); }
+
+        /* -------------------------------------
+           SECCIÓN 4: PRUEBAS ESPECÍFICAS
+        -------------------------------------- */
+        .pruebas-table tr { height: 30px; }
+        .col-prueba { width: 35%; font-size: 13px; }
+        .col-hallazgo { width: 65%; font-size: 13px;}
+
+        /* -------------------------------------
+           FIRMAS Y FOOTER
+        -------------------------------------- */
+        .signatures-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 25px;
+            padding: 0 30px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+        .signature-line {
+            border-top: 1px solid var(--utc-blue);
+            width: 42%;
+            text-align: center;
+            font-size: 11.5px;
+            color: var(--utc-blue);
+            font-weight: bold;
+            padding-top: 6px;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            font-size: 10px;
+            color: var(--utc-blue);
+            margin-top: auto;
+            position: relative;
+            z-index: 2;
+        }
+        .page-num { font-size: 15px; font-weight: bold; color: var(--utc-blue); }
+
+        /* =========================================
+           RESPONSIVE Y PRINT
+           ========================================= */
+        @media screen and (max-width: 768px) {
+            body { padding: 10px; }
+            .controls-bar { justify-content: center; }
+            .page { padding: 15px; border-radius: 12px; }
+            .row-split { flex-direction: column; gap: 15px;}
+            .sensibilidad-box, .neuro-box { width: 100%; }
+            .neuro-box table, .movilidad-box table, .pruebas-box table { min-width: 600px; }
+            .box-content { overflow-x: auto; }
+            .signatures-area { flex-direction: column; align-items: center; gap: 35px;}
+            .signature-line { width: 100%; }
+            .page::before { font-size: 150px; }
+        }
+
+        @media print {
+            @page { size: letter portrait; margin: 0; }
+            body { padding: 0; background: white; }
+            .controls-bar { display: none !important; }
+            .page { box-shadow: none !important; width: 215.9mm !important; height: 279.4mm !important; padding: 10mm 15mm !important; margin: 0 !important; }
+            .row-split { flex-direction: row !important; gap: 12px !important; }
+            .sensibilidad-box { width: 40% !important; }
+            .neuro-box { width: 60% !important; }
+            .signatures-area { flex-direction: row !important; margin-top: 20px !important;}
+            .signature-line { width: 42% !important; }
+            textarea { color: #000 !important; }
+            .page::before { color: rgba(230, 235, 240, 0.4) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
+        }
+    </style>
+</head>
+<body>
+
+<div class="controls-bar">
+    <button type="button" class="btn-clear" onclick="clearMarkers()">🗑️ Deshacer marcas</button>
+</div>
+
+<div class="page">
+
+    <div class="row-split">
+        <div class="box sensibilidad-box">
+            <div class="box-title">Exploración de sensibilidad</div>
+            <div class="box-content">
+                <div class="image-marker-container" id="dermatomas-container">
+                    <img src="Humano_2.png" alt="Dermatomas Cuerpo">
+                </div>
+            </div>
+        </div>
+
+        <div class="box neuro-box">
+            <div class="box-title">Exploración neuromuscular</div>
+            <div class="box-content">
+                <table>
+                    <tr>
+                        <th class="col-hallazgos">Hallazgos por dermatomas</th>
+                        <th colspan="2">Valoración de reflejos</th>
+                        <th class="col-tono">Valoración de tono</th>
+                    </tr>
+                    <tr>
+                        <td rowspan="4"><textarea class="free-text"></textarea></td>
+                        <td class="lbl-reflejo">Bicipital</td>
+                        <td><textarea class="free-text"></textarea></td>
+                        <td rowspan="4"><textarea class="free-text"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td class="lbl-reflejo">Tricipital</td>
+                        <td><textarea class="free-text"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td class="lbl-reflejo">Rotuliano</td>
+                        <td><textarea class="free-text"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td class="lbl-reflejo">Aquileo</td>
+                        <td><textarea class="free-text"></textarea></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="box movilidad-box">
+        <div class="box-title">Movilidad</div>
+        <div class="box-content">
+            <table class="movilidad-table">
+                <tr>
+                    <th colspan="5" class="divider-right">Derecho</th>
+                    <th colspan="5">Izquierdo</th>
+                </tr>
+                <tr>
+                    <th class="lbl-movimiento">Movimiento</th>
+                    <th colspan="2" class="inp-fuerza-arco">Fuerza</th>
+                    <th colspan="2" class="inp-fuerza-arco divider-right">Arco</th>
+                    <th class="lbl-movimiento">Movimiento</th>
+                    <th colspan="2" class="inp-fuerza-arco">Fuerza</th>
+                    <th colspan="2" class="inp-fuerza-arco">Arco</th>
+                </tr>
+                <tr>
+                    <td class="lbl-zona">Zona a valorar:</td>
+                    <td class="sub-col"><textarea class="free-text"></textarea></td>
+                    <td class="sub-col"><textarea class="free-text"></textarea></td>
+                    <td class="sub-col"><textarea class="free-text"></textarea></td>
+                    <td class="sub-col divider-right"><textarea class="free-text"></textarea></td>
+
+                    <td class="lbl-zona">Zona a valorar:</td>
+                    <td class="sub-col"><textarea class="free-text"></textarea></td>
+                    <td class="sub-col"><textarea class="free-text"></textarea></td>
+                    <td class="sub-col"><textarea class="free-text"></textarea></td>
+                    <td class="sub-col"><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-movimiento">Flexión</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td class="divider-right"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-movimiento">Flexión</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-movimiento">Extensión</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td class="divider-right"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-movimiento">Extensión</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-movimiento">Abducción</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td class="divider-right"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-movimiento">Abducción</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-movimiento">Rotación interna</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td class="divider-right"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-movimiento">Rotación interna</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-movimiento">Rotación externa</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td class="divider-right"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-movimiento">Rotación externa</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-movimiento">Desviación radial</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td class="divider-right"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-movimiento">Desviación radial</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-movimiento">Desviación cubital</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td class="divider-right"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-movimiento">Desviación cubital</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="obs-row divider-right">
+                        <span class="obs-label">Observaciones:</span>
+                        <textarea class="free-text"></textarea>
+                    </td>
+                    <td colspan="5" class="obs-row">
+                        <span class="obs-label">Observaciones:</span>
+                        <textarea class="free-text"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="10" class="nota-footer">
+                        MMSS: Miembros superiores MMII: Miembros inferiores CV: columna vertebral. Especificar la zona a valorar ejemplo: MMSS Hombro / CV cervical / MMII tobillo
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="box pruebas-box">
+        <div class="box-title">Pruebas específicas</div>
+        <div class="box-content">
+            <table class="pruebas-table">
+                <tr>
+                    <th class="col-prueba">Pruebas</th>
+                    <th class="col-hallazgo">Hallazgos</th>
+                </tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="signatures-area">
+        <div class="signature-line">Nombre, matrícula y firma del alumno</div>
+        <div class="signature-line">Nombre, cédula y firma del docente responsable</div>
+    </div>
+
+    <div class="footer">
+        <div>ESA: Explorado y sin alteraciones; N/A: No Aplica; PN: Preguntado y negado; ✓: Adecuado.</div>
+        <div class="page-num">3</div>
+    </div>
+
+</div>
+
+<script>
+    const container = document.getElementById('dermatomas-container');
+
+    container.addEventListener('click', function(e) {
+        if (e.target.classList.contains('marker')) return;
+
+        const rect = container.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const marker = document.createElement('div');
+        marker.classList.add('marker');
+        marker.innerText = '✖';
+
+        marker.style.left = x + 'px';
+        marker.style.top = y + 'px';
+
+        container.appendChild(marker);
+    });
+
+    function clearMarkers() {
+        const markers = document.querySelectorAll('.marker');
+        markers.forEach(marker => marker.remove());
+    }
+</script>
+
+</body>
+</html>
