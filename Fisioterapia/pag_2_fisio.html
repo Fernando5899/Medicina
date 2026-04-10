@@ -15,23 +15,49 @@
             font-family: Arial, sans-serif;
             background-color: #525659;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             padding: 20px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
-        /* Contenedor de la Hoja (Tamaño Carta por defecto) */
+        /* BARRA DE CONTROLES (Fuera de la hoja) */
+        .controls-bar {
+            width: 100%;
+            max-width: 215.9mm;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+        .btn-clear {
+            padding: 8px 15px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: background 0.2s;
+        }
+        .btn-clear:hover { background-color: #c0392b; }
+
+        /* Contenedor de la Hoja (Tamaño Carta) */
         .page {
             background-color: #fff;
             width: 100%;
             max-width: 215.9mm;
-            min-height: 279.4mm;
-            padding: 12mm 15mm;
+            height: 279.4mm;
+            padding: 10mm 15mm;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             color: var(--utc-blue);
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             position: relative;
+            overflow: hidden;
         }
 
         /* CAJAS PRINCIPALES */
@@ -51,12 +77,12 @@
             font-size: 14px;
             font-weight: bold;
             text-align: center;
-            padding: 6px 0;
+            padding: 5px 0;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
         }
 
-        /* INPUTS TIPO LÍNEA (Para textos fuera de tablas) */
+        /* INPUTS Y TEXTAREAS */
         input.line-input {
             border: none;
             border-bottom: 1px solid var(--utc-blue);
@@ -69,7 +95,6 @@
             font-family: Arial, sans-serif;
         }
 
-        /* TEXTAREAS INVISIBLES (Para tablas y objetivos) */
         .free-text {
             border: none !important;
             background: transparent !important;
@@ -96,6 +121,7 @@
             border: 1px solid var(--utc-blue);
             margin-right: 5px; position: relative; cursor: pointer;
             display: grid; place-content: center;
+            background-color: #fff;
         }
         input[type="checkbox"]:checked::before {
             content: '✓';
@@ -105,255 +131,163 @@
         /* -------------------------------------
            SECCIÓN 1: OBJETIVOS SMART
         -------------------------------------- */
-        .smart-content {
-            display: flex;
-            flex-grow: 1;
-            min-height: 380px;
-        }
+        .smart-content { display: flex; flex-grow: 1; min-height: 340px; }
+        .smart-left { width: 28%; border-right: 2px solid var(--utc-blue); padding: 10px; display: flex; flex-direction: column; }
+        .smart-right { width: 72%; display: flex; flex-direction: column; padding: 10px 10px 0 10px; }
+        .lines-container { display: flex; flex-direction: column; gap: 10px; margin-top: 5px; flex-grow: 1; }
 
-        .smart-left {
-            width: 28%;
-            border-right: 2px solid var(--utc-blue);
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .smart-right {
-            width: 72%;
-            display: flex;
-            flex-direction: column;
-            padding: 10px 10px 0 10px;
-        }
-
-        .lines-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 5px;
-            flex-grow: 1;
-        }
-
-        .smart-reminder {
-            font-size: 9px;
-            color: var(--utc-blue);
-            margin-top: 15px;
-            line-height: 1.3;
-        }
+        .smart-reminder { font-size: 9px; color: var(--utc-blue); margin-top: 10px; line-height: 1.3; }
         .smart-reminder ul { list-style: none; padding-left: 0; margin-top: 4px;}
-        .smart-reminder li { margin-bottom: 3px; }
+        .smart-reminder li { margin-bottom: 2px; }
 
-        /* Contenedor responsivo para las columnas de plazos */
-        .plazos-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .plazos-header {
-            display: flex;
-            background-color: var(--utc-blue);
-            color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 15px;
-            -webkit-print-color-adjust: exact;
-        }
-        .plazos-header div {
-            flex: 1;
-            text-align: center;
-            font-size: 11px;
-            font-weight: bold;
-            padding: 4px 0;
-            border-right: 1px solid white;
-        }
+        .plazos-wrapper { width: 100%; display: flex; flex-direction: column; flex-grow: 1; }
+        .plazos-header { display: flex; background-color: var(--utc-blue); color: white; border-radius: 10px; overflow: hidden; margin-top: 10px; -webkit-print-color-adjust: exact; }
+        .plazos-header div { flex: 1; text-align: center; font-size: 11px; font-weight: bold; padding: 4px 0; border-right: 1px solid white; }
         .plazos-header div:last-child { border-right: none; }
-
-        .plazos-columns {
-            display: flex;
-            flex-grow: 1;
-            margin-top: 5px;
-        }
-        .plazos-columns textarea {
-            flex: 1;
-            border: none;
-            border-right: 1px solid var(--utc-blue);
-            background: transparent;
-            resize: none;
-            outline: none;
-            padding: 8px;
-            font-size: 11px;
-            font-family: Arial, sans-serif;
-            color: #000;
-        }
+        .plazos-columns { display: flex; flex-grow: 1; margin-top: 5px; }
+        .plazos-columns textarea { flex: 1; border: none; border-right: 1px solid var(--utc-blue); background: transparent; resize: none; outline: none; padding: 8px; font-size: 11px; font-family: Arial, sans-serif; color: #000; }
         .plazos-columns textarea:last-child { border-right: none; }
-
 
         /* -------------------------------------
            SECCIÓN 2: EXPLORACIÓN FÍSICA
         -------------------------------------- */
-        /* Contenedor responsivo para la tabla */
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch; /* Suaviza el scroll en iOS */
-        }
-
-        .tabla-exploracion {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: center;
-        }
-        .tabla-exploracion th {
-            color: var(--utc-blue);
-            font-size: 13px;
-            padding: 6px;
-            border-bottom: 2px solid var(--utc-blue);
-            border-right: 1px solid var(--utc-blue);
-        }
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .tabla-exploracion { width: 100%; border-collapse: collapse; text-align: center; }
+        .tabla-exploracion th { color: var(--utc-blue); font-size: 14px; padding: 4px; border-bottom: 1px solid var(--utc-blue); border-right: 1px solid var(--utc-blue); }
         .tabla-exploracion th:last-child { border-right: none; }
-
-        .tabla-exploracion td {
-            border: 1px solid var(--utc-blue);
-            height: 30px;
-            padding: 0;
-            vertical-align: middle;
-        }
+        .tabla-exploracion td { border: 1px solid var(--utc-blue); height: 28px; padding: 0; vertical-align: middle; }
         .tabla-exploracion td:first-child { border-left: none; }
         .tabla-exploracion td:last-child { border-right: none; }
         tr:last-child td { border-bottom: none; }
-
-        .lbl-col { color: var(--utc-blue); font-size: 11px; width: 12%; text-align: center; padding: 5px;}
+        .lbl-col { color: var(--utc-blue); font-size: 11px; width: 12%; text-align: center; padding: 4px;}
         .inp-col { width: 21%; }
 
         /* -------------------------------------
            SECCIÓN 3: ESTADO DE LA ZONA
         -------------------------------------- */
-        .zona-content {
-            display: flex;
-            padding: 15px;
-            min-height: 220px;
+        .zona-content { display: flex; padding: 12px 15px; }
+        .zona-left { width: 35%; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+        .zona-right { width: 65%; padding-left: 20px; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
+
+        .title-ubicacion { color: var(--utc-blue); font-weight: bold; font-size: 13px; margin-bottom: 5px; text-align: center;}
+
+        .image-marker-container {
+            position: relative;
+            display: inline-block;
+            cursor: crosshair;
         }
 
-        .zona-left {
-            width: 30%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .image-marker-container img {
+            max-width: 100%;
+            height: 190px;
+            object-fit: contain;
         }
 
-        .zona-left .title-ubicacion {
-            color: var(--utc-blue);
+        .marker {
+            position: absolute;
+            color: red;
             font-weight: bold;
-            font-size: 13px;
-            margin-bottom: 10px;
+            font-size: 18px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            text-shadow: 1px 1px 0px white, -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white;
         }
 
-        .zona-right {
-            width: 70%;
-            padding-left: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 12px;
-        }
-
-        .form-row-zona {
-            display: flex;
-            align-items: center;
-        }
-        .form-row-zona .lbl {
-            width: 90px;
-            font-weight: bold;
-            font-size: 11px;
-            color: var(--utc-blue);
-        }
-
-        .otros-row {
-            display: flex;
-            align-items: flex-end;
-            gap: 10px;
-            margin-top: 5px;
-        }
+        .form-row-zona { display: flex; align-items: center; flex-wrap: wrap; }
+        .form-row-zona .lbl { width: 90px; font-weight: bold; font-size: 11px; color: var(--utc-blue); }
+        .otros-row { display: flex; align-items: flex-end; gap: 10px; margin-top: 5px; flex-wrap: wrap; }
         .otros-row .lbl { font-weight: bold; font-size: 11px; color: var(--utc-blue); }
 
         /* FOOTER */
-        .footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-top: auto;
-            font-size: 9px;
-            color: var(--utc-blue);
-            border-top: 1px solid var(--utc-light-blue);
-            padding-top: 8px;
-        }
+        .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; font-size: 9px; color: var(--utc-blue); border-top: 1px solid var(--utc-light-blue); padding-top: 5px; }
         .page-num { font-size: 14px; font-weight: bold; }
 
-        /* -------------------------------------
-           MEDIA QUERIES (RESPONSIVE PARA MÓVILES)
-        -------------------------------------- */
+        /* =========================================
+           RESPONSIVE (Solo PANTALLA, excluye Print)
+           ========================================= */
         @media screen and (max-width: 768px) {
             body { padding: 10px; }
-            .page {
-                padding: 15px;
-                height: auto;
-                min-height: auto;
-                border-radius: 12px; /* Aspecto de tarjeta en móviles */
-                max-width: 100%;
-            }
+            .controls-bar { justify-content: center; }
+            .page { padding: 15px; height: auto; min-height: auto; border-radius: 12px; max-width: 100%; overflow: visible; }
 
-            /* Apilar sección SMART */
+            /* Objetivos SMART apilados */
             .smart-content { flex-direction: column; min-height: auto; }
-            .smart-left {
-                width: 100%;
-                border-right: none;
-                border-bottom: 2px dashed var(--utc-blue);
-                padding-bottom: 15px;
-            }
+            .smart-left { width: 100%; border-right: none; border-bottom: 2px dashed var(--utc-blue); padding-bottom: 15px; }
             .smart-right { width: 100%; padding: 15px 0 0 0; }
 
-            /* Forzar un ancho mínimo interno para que haga scroll horizontal táctil y no se aplasten los textareas */
-            .plazos-header, .plazos-columns { min-width: 600px; }
+            /* Ajuste de plazos para móviles (Columna en vez de fila) */
+            .plazos-header { flex-direction: column; border-radius: 5px; }
+            .plazos-header div { border-right: none; border-bottom: 1px solid white; padding: 8px 0; }
+            .plazos-header div:last-child { border-bottom: none; }
+            .plazos-columns { flex-direction: column; }
+            .plazos-columns textarea { border-right: none; border-bottom: 1px dashed var(--utc-blue); min-height: 80px; }
+            .plazos-columns textarea:last-child { border-bottom: none; }
 
-            /* Forzar scroll en la tabla */
+            /* Tablas con scroll horizontal en móviles */
             .tabla-exploracion { min-width: 650px; }
 
-            /* Apilar sección Estado de la Zona */
+            /* Estado de la zona apilado */
             .zona-content { flex-direction: column; }
-            .zona-left {
-                width: 100%;
-                border-bottom: 2px dashed var(--utc-blue);
-                padding-bottom: 20px;
-                margin-bottom: 15px;
-            }
+            .zona-left { width: 100%; border-bottom: 2px dashed var(--utc-blue); padding-bottom: 20px; margin-bottom: 15px; }
             .zona-right { width: 100%; padding-left: 0; }
-
-            /* Permitir que los inputs de 'Otro' bajen de línea si no caben */
-            .otros-row { flex-wrap: wrap; }
             .otros-row input.line-input { min-width: 80px; }
         }
 
-        /* -------------------------------------
-           IMPRESIÓN (Mantiene el formato carta exacto)
-        -------------------------------------- */
+        /* =========================================
+           IMPRESIÓN (Obliga formato carta original)
+           ========================================= */
         @media print {
-            @page { size: letter; margin: 0; }
-            body { padding: 0; background: none; }
-            .page { box-shadow: none; border: none; border-radius: 0; max-width: 215.9mm; }
+            @page { size: letter portrait; margin: 0; }
+            body {
+                padding: 0;
+                background: white;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .controls-bar { display: none !important; }
+
+            /* Forzar contenedor principal */
+            .page {
+                box-shadow: none !important;
+                border: none !important;
+                border-radius: 0 !important;
+                width: 215.9mm !important;
+                max-width: 215.9mm !important;
+                height: 279.4mm !important;
+                max-height: 279.4mm !important;
+                padding: 10mm 15mm !important;
+                margin: 0 !important;
+                overflow: hidden !important;
+            }
+
+            /* Anular cualquier comportamiento responsivo en caso de imprimir desde ventana chica */
+            .smart-content { flex-direction: row !important; }
+            .smart-left { width: 28% !important; border-bottom: none !important; border-right: 2px solid var(--utc-blue) !important; }
+            .smart-right { width: 72% !important; padding: 10px 10px 0 10px !important; }
+
+            .plazos-header { flex-direction: row !important; }
+            .plazos-header div { border-bottom: none !important; border-right: 1px solid white !important; }
+            .plazos-header div:last-child { border-right: none !important; }
+            .plazos-columns { flex-direction: row !important; }
+            .plazos-columns textarea { border-bottom: none !important; border-right: 1px solid var(--utc-blue) !important; min-height: auto !important; }
+            .plazos-columns textarea:last-child { border-right: none !important; }
+
+            .zona-content { flex-direction: row !important; }
+            .zona-left { width: 35% !important; border-bottom: none !important; }
+            .zona-right { width: 65% !important; padding-left: 20px !important; }
+
+            /* Correcciones visuales de impresión */
             input[type="checkbox"] { border: 1px solid var(--utc-blue) !important; }
             textarea, input { color: #000 !important; }
-            ::-webkit-input-placeholder { color: transparent; }
-            :-moz-placeholder { color: transparent; }
-            ::-moz-placeholder { color: transparent; }
-            :-ms-input-placeholder { color: transparent; }
-            .table-responsive, .plazos-wrapper { overflow-x: visible; }
+            ::-webkit-input-placeholder { color: transparent !important; }
         }
     </style>
 </head>
 <body>
+
+<div class="controls-bar">
+    <button type="button" class="btn-clear" onclick="clearMarkers()">🗑️ Deshacer marcas</button>
+</div>
 
 <div class="page">
 
@@ -363,14 +297,10 @@
             <div class="smart-left">
                 <div style="font-weight: bold; font-size: 11px; margin-bottom: 5px;">Objetivo del paciente:</div>
                 <div class="lines-container">
-                    <input type="text" class="line-input">
-                    <input type="text" class="line-input">
-                    <input type="text" class="line-input">
-                    <input type="text" class="line-input">
-                    <input type="text" class="line-input">
-                    <input type="text" class="line-input">
-                    <input type="text" class="line-input">
-                    <input type="text" class="line-input">
+                    <input type="text" class="line-input"><input type="text" class="line-input">
+                    <input type="text" class="line-input"><input type="text" class="line-input">
+                    <input type="text" class="line-input"><input type="text" class="line-input">
+                    <input type="text" class="line-input"><input type="text" class="line-input">
                 </div>
                 <div class="smart-reminder">
                     <p>Recordando, SMART, donde:</p>
@@ -396,7 +326,6 @@
                         <div>Objetivos a mediano plazo</div>
                         <div>Objetivos a largo plazo</div>
                     </div>
-
                     <div class="plazos-columns">
                         <textarea placeholder="Escribe aquí..."></textarea>
                         <textarea placeholder="Escribe aquí..."></textarea>
@@ -421,23 +350,25 @@
                     <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
                     <td class="lbl-col">Cicatriz</td>
                     <td class="inp-col"><textarea class="free-text"></textarea></td>
-                    <td class="lbl-col" rowspan="2">Temperatura</td>
-                    <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-col">Temperatura</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
                 </tr>
                 <tr>
                     <td class="lbl-col">Hematoma</td>
                     <td class="inp-col"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-col" rowspan="2">Contractura</td>
+                    <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
                 </tr>
                 <tr>
                     <td class="lbl-col" rowspan="2">Movilidad</td>
                     <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
                     <td class="lbl-col">Edema</td>
                     <td class="inp-col"><textarea class="free-text"></textarea></td>
-                    <td class="lbl-col" rowspan="2">Contractura</td>
-                    <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
                 </tr>
                 <tr>
                     <td class="lbl-col">Tumefacción</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-col">Dolor</td>
                     <td class="inp-col"><textarea class="free-text"></textarea></td>
                 </tr>
                 <tr>
@@ -445,7 +376,7 @@
                     <td class="inp-col"><textarea class="free-text"></textarea></td>
                     <td class="lbl-col">Otro</td>
                     <td class="inp-col"><textarea class="free-text"></textarea></td>
-                    <td class="lbl-col">Dolor<br><br>Otro</td>
+                    <td class="lbl-col">Otro</td>
                     <td class="inp-col"><textarea class="free-text"></textarea></td>
                 </tr>
             </table>
@@ -455,9 +386,13 @@
     <div class="box">
         <div class="box-header">Estado de la zona</div>
         <div class="zona-content">
+
             <div class="zona-left">
                 <div class="title-ubicacion">Ubicación</div>
-                <img src="Humano_1.png" alt="Ubicación Cuerpo" style="max-width: 100%; height: 180px; object-fit: contain;">
+
+                <div class="image-marker-container" id="body-container">
+                    <img src="Humano_1.png" alt="Ubicación Cuerpo">
+                </div>
             </div>
 
             <div class="zona-right">
@@ -498,20 +433,14 @@
                 </div>
 
                 <div class="otros-row" style="margin-top: 15px;">
-                    <div class="lbl">Otro:</div>
-                    <input type="text" class="line-input" style="flex: 1;">
-                    <div class="lbl">Severidad:</div>
-                    <input type="text" class="line-input" style="flex: 1;">
-                    <div class="lbl">Zona:</div>
-                    <input type="text" class="line-input" style="flex: 2;">
+                    <div class="lbl">Otro:</div><input type="text" class="line-input" style="flex: 1;">
+                    <div class="lbl">Severidad:</div><input type="text" class="line-input" style="flex: 1;">
+                    <div class="lbl">Zona:</div><input type="text" class="line-input" style="flex: 2;">
                 </div>
                 <div class="otros-row">
-                    <div class="lbl">Otro:</div>
-                    <input type="text" class="line-input" style="flex: 1;">
-                    <div class="lbl">Severidad:</div>
-                    <input type="text" class="line-input" style="flex: 1;">
-                    <div class="lbl">Zona:</div>
-                    <input type="text" class="line-input" style="flex: 2;">
+                    <div class="lbl">Otro:</div><input type="text" class="line-input" style="flex: 1;">
+                    <div class="lbl">Severidad:</div><input type="text" class="line-input" style="flex: 1;">
+                    <div class="lbl">Zona:</div><input type="text" class="line-input" style="flex: 2;">
                 </div>
             </div>
         </div>
@@ -523,6 +452,30 @@
     </div>
 
 </div>
+
+<script>
+    const container = document.getElementById('body-container');
+
+    container.addEventListener('click', function(e) {
+        const rect = container.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const marker = document.createElement('div');
+        marker.classList.add('marker');
+        marker.innerText = '✖';
+
+        marker.style.left = x + 'px';
+        marker.style.top = y + 'px';
+
+        container.appendChild(marker);
+    });
+
+    function clearMarkers() {
+        const markers = document.querySelectorAll('.marker');
+        markers.forEach(marker => marker.remove());
+    }
+</script>
 
 </body>
 </html>
