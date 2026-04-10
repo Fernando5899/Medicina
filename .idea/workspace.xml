@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="8c8e1f38-6131-4df1-8dd9-7fe244db1d0d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fisioterapia/Historia Clínica Fisioterapéutica UTC.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Historia_Clinica/2. Historia Clínica.pdf" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,6 +38,9 @@
   &quot;fromUser&quot;: false
 }</component>
   <component name="ProjectId" id="3C7dyHHo7EISBwLwi7Js5qqzoYC" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -85,7 +90,7 @@
       <workItem from="1775744951261" duration="1584000" />
       <workItem from="1775747104415" duration="992000" />
       <workItem from="1775751043058" duration="2275000" />
-      <workItem from="1775776596431" duration="10974000" />
+      <workItem from="1775776596431" duration="12363000" />
     </task>
     <servers />
   </component>

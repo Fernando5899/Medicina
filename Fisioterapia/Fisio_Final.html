@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historia Clínica Fisioterapéutica Completa - UTC</title>
+    <style>
+        /* =========================================
+           1. ESTILOS GLOBALES Y VARIABLES
+           ========================================= */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            /* Azul principal */
+            --utc-blue: #1F4287;
+            --utc-light-blue: #5575B3;
+        }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #525659;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            gap: 30px; /* Separación entre las 3 hojas */
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* BARRA DE CONTROLES FLOTANTE */
+        .controls-bar {
+            width: 100%;
+            max-width: 215.9mm;
+            display: flex;
+            justify-content: flex-end;
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+        }
+        .btn-clear {
+            padding: 8px 15px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: background 0.3s;
+        }
+        .btn-clear:hover { background-color: #c0392b; }
+
+        /* CONTENEDOR BASE DE CADA HOJA TAMAÑO CARTA */
+        .page {
+            background-color: #fff;
+            width: 100%;
+            max-width: 215.9mm;
+            min-height: 279.4mm;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            color: var(--utc-blue);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            padding: 10mm 15mm;
+        }
+
+        /* ESTILOS COMPARTIDOS DE FORMULARIO */
+        input.line-input {
+            border: none;
+            border-bottom: 1px solid var(--utc-blue);
+            background: transparent;
+            font-size: 10px;
+            color: #000;
+            outline: none;
+            width: 100%;
+            font-family: Arial, sans-serif;
+        }
+        .free-text {
+            border: none !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            font-size: 11px;
+            color: #000;
+            outline: none !important;
+            resize: none;
+            width: 100%;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            padding: 4px 6px;
+            box-sizing: border-box;
+            display: block;
+        }
+        .chk-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;}
+        .chk-label { display: flex; align-items: center; cursor: pointer; font-size: 10px; color: var(--utc-blue); font-weight: bold;}
+
+        input[type="checkbox"], input[type="radio"] {
+            appearance: none; -webkit-appearance: none;
+            width: 10px; height: 10px;
+            border: 1px solid var(--utc-blue);
+            margin-right: 4px; position: relative; cursor: pointer;
+            background-color: #fff;
+            display: inline-block;
+        }
+        input[type="checkbox"]:checked::after, input[type="radio"]:checked::after {
+            content: '✓';
+            font-size: 10px; color: var(--utc-blue); font-weight: bold;
+            position: absolute; top: -3px; left: 1px;
+        }
+
+        /* =========================================
+           2. ESTILOS ESPECÍFICOS - PÁGINA 1
+           ========================================= */
+        .page-1 { padding: 10mm 12mm; gap: 0;}
+        .page-1 .header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+        .page-1 .logo { display: flex; flex-direction: column; color: var(--utc-blue); width: 120px;}
+        .page-1 .logo h1 { font-size: 38px; letter-spacing: -2px; margin-bottom: -5px; font-weight: 900; }
+        .page-1 .logo p { font-size: 8px; line-height: 1; font-weight: bold; }
+        .page-1 .title-section { flex-grow: 1; margin-left: 15px; display: flex; flex-direction: column;}
+        .page-1 .main-title { background-color: var(--utc-blue); color: #fff; text-align: center; font-size: 22px; font-weight: bold; padding: 6px 20px; border-radius: 20px; }
+        .page-1 .title-sub-row { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 5px; padding: 0 10px; }
+        .page-1 .address { font-size: 9px; color: var(--utc-light-blue); font-weight: bold;}
+        .page-1 .fecha-container { display: flex; align-items: flex-end; width: 140px; }
+
+        .page-1 .box-float { border: 2px solid var(--utc-blue); border-radius: 12px; position: relative; padding: 10px 8px 6px 8px; margin-top: 12px; margin-bottom: 2px; width: 100%; }
+        .page-1 .box-title-float { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background-color: var(--utc-blue); color: white; font-size: 11px; font-weight: bold; padding: 2px 15px; border-radius: 10px; white-space: nowrap; }
+        .page-1 .box-title-float.left-aligned { left: 15px; transform: none; }
+
+        .page-1 .form-row { display: flex; flex-wrap: wrap; gap: 5px 10px; align-items: flex-end; margin-bottom: 4px; }
+        .page-1 .field { display: flex; align-items: flex-end; flex-grow: 1; }
+        .page-1 .field-label { font-weight: bold; color: var(--utc-blue); margin-right: 4px; white-space: nowrap; font-size: 10px;}
+
+        .page-1 .grid-60-40 { display: grid; grid-template-columns: 63% 35%; gap: 2%; }
+        .page-1 .grid-3-col { display: grid; grid-template-columns: 28% 34% 34%; gap: 2%; }
+        .page-1 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .page-1 .escala-dolor-chk { display: flex; width: 100%; justify-content: space-around; margin-top: 6px; flex-wrap: wrap; gap: 5px; }
+        .page-1 .escala-dolor-chk label { display: flex; flex-direction: column; align-items: center; font-size: 8px; font-weight: bold; color: var(--utc-blue); gap: 2px; }
+        .page-1 .escala-dolor-chk input { margin-right: 0; }
+
+        .page-1 table { width: 100%; border-collapse: collapse; text-align: center; }
+        .page-1 th, .page-1 td { border: 1px solid var(--utc-light-blue); padding: 0; font-size: 8px; height: 14px; }
+        .page-1 th { color: #fff; background-color: var(--utc-blue); font-weight: bold; padding: 2px;}
+        .page-1 .text-left { text-align: left; padding-left: 4px; }
+        .page-1 input.table-input { width: 100%; height: 100%; border: none; background: transparent; text-align: center; font-size: 9px; outline: none; padding: 0 2px; }
+        .page-1 .tabla-antecedentes th, .page-1 .tabla-antecedentes td { border: 1px solid var(--utc-blue) !important; color: var(--utc-blue) !important; padding: 3px 4px; height: 18px; font-size: 10px;}
+        .page-1 .tabla-antecedentes th { background-color: transparent !important; font-size: 10.5px; }
+        .page-1 .full-width-title { background-color: var(--utc-blue); color: white; font-weight: bold; font-size: 11px; padding: 3px 0; text-align: center; width: 100%; }
+
+        .page-1 .blank-lines { display: flex; flex-direction: column; gap: 4px; margin-top: 5px; }
+        .page-1 .motivo-container { display: flex; gap: 15px; }
+        .page-1 .motivo-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        .page-1 .alicia-box { width: 160px; font-size: 8px; border-left: 1px solid var(--utc-blue); padding-left: 10px; }
+        .page-1 .alicia-box b { color: var(--utc-blue); }
+
+        /* =========================================
+           3. ESTILOS ESPECÍFICOS - PÁGINA 2 & 3 (Bloques Compartidos)
+           ========================================= */
+        .box-block {
+            border: 1.5px solid var(--utc-blue);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            width: 100%;
+        }
+        .box-block-title {
+            background-color: var(--utc-blue);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            padding: 5px 0;
+            margin: 0;
+            border-bottom: 1.5px solid var(--utc-blue);
+        }
+
+        /* PÁGINA 2 ESPECÍFICO */
+        .page-2 { gap: 12px; }
+        .page-2 input.line-input { font-size: 11px; height: 16px; }
+        .page-2 .smart-content { display: flex; flex-grow: 1; min-height: 340px; }
+        .page-2 .smart-left { width: 28%; border-right: 2px solid var(--utc-blue); padding: 10px; display: flex; flex-direction: column; }
+        .page-2 .smart-right { width: 72%; display: flex; flex-direction: column; padding: 10px 10px 0 10px; }
+
+        /* CORRECCIÓN OBJETIVOS SMART (Líneas y bordes verticales) */
+        .page-2 .lines-container { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; flex-grow: 1; }
+        .page-2 .lines-container input.line-input { width: 100%; }
+        .page-2 .smart-reminder { font-size: 9px; color: var(--utc-blue); margin-top: 15px; line-height: 1.3; }
+
+        .page-2 .plazos-header { display: flex; background-color: var(--utc-blue); color: white; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+        .page-2 .plazos-header div { flex: 1; text-align: center; font-size: 11px; font-weight: bold; padding: 4px 0; border-right: 1px solid white; }
+        .page-2 .plazos-header div:last-child { border-right: none; }
+
+        /* Contenedores para las columnas de los plazos para que la línea vertical se dibuje bien */
+        .page-2 .plazos-columns { display: flex; flex-grow: 1; margin-top: 5px; align-items: stretch;}
+        .page-2 .plazo-col { flex: 1; display: flex; flex-direction: column; }
+        .page-2 .plazo-col:not(:last-child) { border-right: 1.5px solid var(--utc-blue); }
+        .page-2 .plazo-col textarea { flex-grow: 1; padding: 8px 10px; }
+
+        .page-2 .tabla-exploracion { width: 100%; border-collapse: collapse; text-align: center; }
+        .page-2 .tabla-exploracion th { color: var(--utc-blue); font-size: 14px; padding: 4px; border-bottom: 1px solid var(--utc-blue); border-right: 1px solid var(--utc-blue); }
+        .page-2 .tabla-exploracion td { border: 1px solid var(--utc-blue); height: 28px; padding: 0; }
+        .page-2 .lbl-col { color: var(--utc-blue); font-size: 11px; width: 12%; text-align: center; padding: 4px;}
+        .page-2 .inp-col { width: 21%; }
+
+        .page-2 .zona-content { display: flex; padding: 12px 15px; }
+        .page-2 .zona-left { width: 35%; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+        .page-2 .zona-right { width: 65%; padding-left: 20px; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
+        .page-2 .title-ubicacion { color: var(--utc-blue); font-weight: bold; font-size: 13px; margin-bottom: 5px; text-align: center;}
+
+        /* PÁGINA 3 ESPECÍFICO */
+        .page-3 { gap: 15px; }
+        .page-3::before {
+            content: "utc"; position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 280px; font-weight: 900; color: rgba(230, 235, 240, 0.4); z-index: -1; pointer-events: none; letter-spacing: -15px;
+        }
+        .page-3 .box-content { flex: 1; display: flex; flex-direction: column; }
+        .page-3 .row-split { display: flex; gap: 12px; width: 100%; align-items: stretch; }
+        .page-3 table { width: 100%; border-collapse: collapse; text-align: center; height: 100%; }
+        .page-3 th { color: var(--utc-blue); font-size: 12.5px; font-weight: bold; padding: 7px 4px; border: 1px solid var(--utc-blue); }
+        .page-3 td { border: 1px solid var(--utc-blue); padding: 0; vertical-align: middle; }
+
+        .page-3 .sensibilidad-box { width: 40%; }
+        .page-3 .neuro-box { width: 60%; }
+        .page-3 .col-hallazgos { width: 22%; font-size: 12px;}
+        .page-3 .lbl-reflejo { color: var(--utc-blue); font-size: 12.5px; width: 18%; text-align: center; padding: 8px; }
+        .page-3 .col-tono { width: 22%; font-size: 12px;}
+
+        .page-3 .movilidad-table td { height: 32px; }
+        .page-3 .lbl-movimiento { color: var(--utc-blue); font-size: 11.5px; width: 16%; padding: 0 8px; }
+        .page-3 .lbl-zona { color: var(--utc-blue); font-size: 12px; font-weight: bold; padding: 0 8px; text-align: left;}
+        .page-3 .inp-fuerza-arco { width: 17%; }
+        .page-3 .sub-col { width: 8.5%; }
+        .page-3 .divider-right { border-right: 1.5px solid var(--utc-blue) !important; }
+        .page-3 .obs-row { text-align: left !important; padding: 4px 8px !important; vertical-align: top;}
+        .page-3 .obs-label { color: var(--utc-blue); font-weight: bold; font-size: 11.5px; float: left; margin-right: 5px; margin-top: 4px;}
+        .page-3 .nota-footer { font-size: 9.5px; color: var(--utc-blue); text-align: left !important; padding: 5px 8px !important; border-top: 1px solid var(--utc-blue); }
+
+        .page-3 .col-prueba { width: 35%; font-size: 13px; }
+        .page-3 .col-hallazgo { width: 65%; font-size: 13px;}
+
+        .page-3 .signatures-area { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 25px; padding: 0 30px; margin-bottom: 10px; }
+        .page-3 .signature-line { border-top: 1px solid var(--utc-blue); width: 42%; text-align: center; font-size: 11.5px; color: var(--utc-blue); font-weight: bold; padding-top: 6px; }
+
+        /* MARCADORES DE IMÁGENES COMPARTIDOS (Pag 2 y 3) */
+        .image-marker-container { position: relative; display: flex; justify-content: center; align-items: center; cursor: crosshair; }
+        .image-marker-container img { max-width: 100%; object-fit: contain; }
+        .page-2 .image-marker-container img { height: 190px; }
+        .page-3 .image-marker-container { height: 100%; min-height: 230px; padding: 10px; }
+        .page-3 .image-marker-container img { max-height: 220px; }
+        .marker {
+            position: absolute; color: red; font-weight: bold; font-size: 18px; transform: translate(-50%, -50%); pointer-events: none;
+            text-shadow: 1px 1px 0px white, -1px -1px 0px white, 1px -1px 0px white, -1px 1px 0px white;
+        }
+
+        /* FOOTER GLOBAL DE LAS HOJAS */
+        .page-footer { display: flex; justify-content: space-between; align-items: flex-end; font-size: 8px; color: var(--utc-blue); border-top: 1px solid var(--utc-light-blue); padding-top: 5px; margin-top: auto; position: relative; z-index: 2;}
+        .page-num { font-size: 14px; font-weight: bold; }
+
+        /* =========================================
+           RESPONSIVE (MÓVILES)
+           ========================================= */
+        @media screen and (max-width: 768px) {
+            body { padding: 10px; }
+            .page { padding: 15px; border-radius: 12px; height: auto; min-height: auto; max-width: 100%; overflow: visible; box-shadow: 0 2px 8px rgba(0,0,0,0.2);}
+            .controls-bar { position: static; justify-content: center; margin-bottom: 15px;}
+
+            /* Pag 1 */
+            .page-1 .header { flex-direction: column; align-items: center; text-align: center; }
+            .page-1 .logo { align-items: center; margin-bottom: 15px; }
+            .page-1 .title-sub-row { flex-direction: column; gap: 10px; align-items: center; text-align: center; }
+            .page-1 .grid-60-40, .page-1 .grid-3-col, .page-1 .grid-2 { grid-template-columns: 1fr; gap: 15px; }
+            .page-1 .form-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .page-1 .box-title-float.left-aligned { left: 50%; transform: translateX(-50%); }
+            .page-1 .motivo-container { flex-direction: column; }
+            .page-1 table { min-width: 600px; }
+
+            /* Pag 2 */
+            .page-2 .smart-content { flex-direction: column; min-height: auto; }
+            .page-2 .smart-left { width: 100%; border-right: none; border-bottom: 2px dashed var(--utc-blue); padding-bottom: 15px; }
+            .page-2 .smart-right { width: 100%; padding: 15px 0 0 0; }
+            .page-2 .plazos-header { flex-direction: column; border-radius: 5px; }
+            .page-2 .plazos-columns { flex-direction: column; }
+            .page-2 .tabla-exploracion { min-width: 650px; }
+            .page-2 .zona-content { flex-direction: column; }
+            .page-2 .zona-left { width: 100%; border-bottom: 2px dashed var(--utc-blue); padding-bottom: 20px; margin-bottom: 15px; }
+            .page-2 .zona-right { width: 100%; padding-left: 0; }
+
+            /* Pag 3 */
+            .page-3 .row-split { flex-direction: column; gap: 15px;}
+            .page-3 .sensibilidad-box, .page-3 .neuro-box { width: 100%; }
+            .page-3 table { min-width: 600px; }
+            .page-3 .box-content { overflow-x: auto; }
+            .page-3 .signatures-area { flex-direction: column; align-items: center; gap: 35px;}
+            .page-3 .signature-line { width: 100%; }
+            .page-3::before { font-size: 150px; }
+        }
+
+        /* =========================================
+           IMPRESIÓN (Mantiene formato original y divide páginas)
+           ========================================= */
+        @media print {
+            @page { size: letter portrait; margin: 0; }
+            body { padding: 0; background: white; gap: 0; }
+            .controls-bar { display: none !important; }
+
+            /* FUERZA LA SEPARACIÓN DE PÁGINAS */
+            .page {
+                page-break-after: always;
+                box-shadow: none !important;
+                border: none !important;
+                border-radius: 0 !important;
+                width: 215.9mm !important;
+                max-width: 215.9mm !important;
+                height: 279.4mm !important;
+                max-height: 279.4mm !important;
+                margin: 0 !important;
+                overflow: hidden !important;
+            }
+            .page:last-child { page-break-after: auto; } /* Evita una hoja en blanco al final */
+
+            /* Resets de Pag 1 */
+            .page-1 .grid-60-40 { grid-template-columns: 63% 35% !important; }
+            .page-1 .grid-3-col { grid-template-columns: 28% 34% 34% !important; }
+            .page-1 .grid-2 { grid-template-columns: 1fr 1fr !important; }
+            .page-1 .form-row { flex-direction: row !important; align-items: flex-end !important; }
+            .page-1 .motivo-container { flex-direction: row !important; }
+            .page-1 .alicia-box { width: 160px !important; border-left: 1px solid var(--utc-blue) !important; padding-left: 10px !important; }
+
+            /* Resets de Pag 2 */
+            .page-2 .smart-content { flex-direction: row !important; }
+            .page-2 .smart-left { width: 28% !important; border-bottom: none !important; border-right: 2px solid var(--utc-blue) !important; }
+            .page-2 .smart-right { width: 72% !important; padding: 10px 10px 0 10px !important; }
+            .page-2 .plazos-header { flex-direction: row !important; }
+            .page-2 .plazos-columns { flex-direction: row !important; }
+            .page-2 .zona-content { flex-direction: row !important; }
+            .page-2 .zona-left { width: 35% !important; border-bottom: none !important; }
+            .page-2 .zona-right { width: 65% !important; padding-left: 20px !important; }
+
+            /* Resets de Pag 3 */
+            .page-3 .row-split { flex-direction: row !important; gap: 12px !important; }
+            .page-3 .sensibilidad-box { width: 40% !important; }
+            .page-3 .neuro-box { width: 60% !important; }
+            .page-3 .signatures-area { flex-direction: row !important; margin-top: 20px !important;}
+            .page-3 .signature-line { width: 42% !important; }
+
+            textarea, input { color: #000 !important; }
+            ::-webkit-input-placeholder { color: transparent !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="controls-bar">
+    <button type="button" class="btn-clear" onclick="clearMarkers()">🗑️ Deshacer marcas (Ambos Diagramas)</button>
+</div>
+
+<div class="page page-1">
+    <div class="header">
+        <div class="logo">
+            <h1>utc</h1>
+            <p>Universidad<br>Tres Culturas</p>
+        </div>
+        <div class="title-section">
+            <div class="main-title">Historia Clínica Fisioterapéutica</div>
+            <div class="title-sub-row">
+                <div class="address">Av. Insurgentes Sur 92, Juárez, Cuauhtémoc, 06600 Ciudad de México, CDMX</div>
+                <div class="fecha-container">
+                    <span class="field-label">Fecha:</span>
+                    <input type="text" class="line-input">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box-float" style="margin-top: 0;">
+        <div class="box-title-float left-aligned">Datos personales</div>
+        <div class="form-row">
+            <div class="field" style="flex: 3;"><span class="field-label">Nombre completo</span><input type="text" class="line-input"></div>
+            <div class="field" style="flex: 0.8;"><span class="field-label">Edad</span><input type="text" class="line-input"></div>
+            <div class="field" style="flex: 1.2;"><span class="field-label">Expediente</span><input type="text" class="line-input"></div>
+        </div>
+        <div class="form-row">
+            <div class="field chk-group" style="flex: 1;">
+                <span class="field-label">Sexo</span>
+                <label class="chk-label"><input type="radio" name="sexo"> Fem</label>
+                <label class="chk-label"><input type="radio" name="sexo"> Mas</label>
+            </div>
+            <div class="field chk-group" style="flex: 1.5;">
+                <span class="field-label">Edo. civil</span>
+                <label class="chk-label"><input type="radio" name="civil"> Soltero</label>
+                <label class="chk-label"><input type="radio" name="civil"> Casado</label>
+                <label class="chk-label"><input type="radio" name="civil"> Viuda(o)</label>
+            </div>
+            <div class="field" style="flex: 1.5;"><span class="field-label">Ocupación</span><input type="text" class="line-input"></div>
+            <div class="field" style="flex: 0.8;"><span class="field-label">F/N</span><input type="text" class="line-input"></div>
+        </div>
+        <div class="form-row">
+            <div class="field" style="flex: 1;"><span class="field-label">Teléfono</span><input type="text" class="line-input"></div>
+            <div class="field" style="flex: 2.5;"><span class="field-label">Dirección</span><input type="text" class="line-input"></div>
+        </div>
+    </div>
+
+    <div class="grid-60-40">
+        <div class="box-float" style="padding: 0; overflow: hidden; border-width: 2px;">
+            <div class="full-width-title" style="font-size: 13px; padding: 6px 0;">Antecedentes patológicos heredofamiliares</div>
+            <div style="width: 100%; overflow-x: auto;">
+                <table class="tabla-antecedentes">
+                    <tr>
+                        <th class="text-left" style="width: 42%;">Enfermedades</th>
+                        <th>Madre</th><th>Padre</th><th>Aa Mat</th><th>Ao Mat</th><th>Aa Pat</th><th>Ao Pat</th>
+                    </tr>
+                    <tr><td class="text-left">Diabetes Mellitus</td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                    <tr><td class="text-left">Obesidad o sobrepeso</td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                    <tr>
+                        <td class="text-left">
+                            <div style="display:flex; align-items:center;">Cáncer, tipo: <input type="text" class="line-input" style="margin-left:4px; flex-grow:1;"></div>
+                        </td>
+                        <td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td>
+                    </tr>
+                    <tr><td class="text-left">Hipertensión</td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                    <tr><td class="text-left">Enfermedades Renales</td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                    <tr><td class="text-left">Enfermedades Endocrinas</td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                    <tr><td class="text-left">Enfermedad Tiroidea</td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                    <tr><td class="text-left">Enfermedades Psiquiátricas</td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                    <tr><td class="text-left">Enfermedades Neurológicas</td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                    <tr><td class="text-left">Enfermedades Autoinmunes</td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                    <tr><td class="text-left">Enfermedades Gastrointestinales</td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td></tr>
+                    <tr>
+                        <td class="text-left">
+                            <div style="display:flex; align-items:center;">Otras: <input type="text" class="line-input" style="margin-left:4px; flex-grow:1;"></div>
+                        </td>
+                        <td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td><td><input type="checkbox"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="box-float">
+            <div class="box-title-float left-aligned">Antecedentes patológicos personales</div>
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+                <label class="chk-label"><input type="checkbox"> Diabetes Mellitus</label>
+                <label class="chk-label"><input type="checkbox"> Obesidad o Sobrepeso</label>
+                <label class="chk-label" style="display:flex;">Cáncer, tipo: <input type="text" class="line-input" style="margin-left:4px; flex-grow:1;"></label>
+                <label class="chk-label"><input type="checkbox"> Hipertensión</label>
+                <label class="chk-label"><input type="checkbox"> Enfermedades Renales</label>
+                <label class="chk-label"><input type="checkbox"> Enfermedades Endocrinas</label>
+                <label class="chk-label"><input type="checkbox"> Enfermedad Tiroidea</label>
+                <label class="chk-label"><input type="checkbox"> Enfermedades Psiquiátricas</label>
+                <label class="chk-label"><input type="checkbox"> Enfermedades Neurológicas</label>
+                <label class="chk-label"><input type="checkbox"> Enfermedades Autoinmunes</label>
+                <label class="chk-label"><input type="checkbox"> Enfermedades Gastrointestinales</label>
+                <label class="chk-label"><input type="checkbox"> Fracturas</label>
+                <label class="chk-label"><input type="checkbox"> Esguinces</label>
+                <label class="chk-label" style="display:flex;">Otras: <input type="text" class="line-input" style="margin-left:4px; flex-grow:1;"></label>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-3-col">
+        <div class="box-float" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <div class="box-title-float">Escala de dolor</div>
+            <img src="Caritas.png" alt="Escala de dolor 0-10" style="max-width: 100%; height: auto; display: block; margin-top:10px;">
+            <div class="escala-dolor-chk">
+                <label>1<input type="checkbox"></label>
+                <label>2<input type="checkbox"></label>
+                <label>3<input type="checkbox"></label>
+                <label>4<input type="checkbox"></label>
+                <label>5<input type="checkbox"></label>
+                <label>6<input type="checkbox"></label>
+                <label>7<input type="checkbox"></label>
+                <label>8<input type="checkbox"></label>
+                <label>9<input type="checkbox"></label>
+                <label>10<input type="checkbox"></label>
+            </div>
+        </div>
+        <div class="box-float">
+            <div class="box-title-float">Diagnósticos médicos</div>
+            <div class="blank-lines">
+                <input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input">
+            </div>
+        </div>
+        <div class="box-float">
+            <div class="box-title-float">Medicamentos</div>
+            <div class="blank-lines">
+                <input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-3-col">
+        <div class="box-float">
+            <div class="box-title-float">Estudios de gabinete</div>
+            <div class="blank-lines">
+                <input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input">
+            </div>
+        </div>
+        <div class="box-float">
+            <div class="box-title-float">Qx o Tx previos</div>
+            <div class="blank-lines">
+                <input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input">
+            </div>
+        </div>
+        <div class="box-float" style="padding: 0; overflow: hidden;">
+            <div class="full-width-title">Antecedentes personales no patológicos</div>
+            <div style="width: 100%; overflow-x: auto;">
+                <table>
+                    <tr><th></th><th>Frecuencia</th><th>Cantidad</th></tr>
+                    <tr><td class="text-left"><label class="chk-label"><input type="checkbox"> Hábito tabáquico</label></td><td><input type="text" class="table-input"></td><td><input type="text" class="table-input"></td></tr>
+                    <tr><td class="text-left"><label class="chk-label"><input type="checkbox"> Consumo de alcohol</label></td><td><input type="text" class="table-input"></td><td><input type="text" class="table-input"></td></tr>
+                    <tr><td class="text-left"><label class="chk-label"><input type="checkbox"> Consumo de drogas</label></td><td><input type="text" class="table-input"></td><td><input type="text" class="table-input"></td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="box-float">
+            <div class="box-title-float">Ejercicio</div>
+            <div class="form-row">
+                <div class="field chk-group"><span class="field-label">Realiza ejercicio</span>
+                    <label class="chk-label"><input type="radio" name="eje"> No</label>
+                    <label class="chk-label"><input type="radio" name="eje"> Sí</label>
+                </div>
+                <div class="field"><span class="field-label">¿Cuál?</span><input type="text" class="line-input"></div>
+            </div>
+            <div class="form-row">
+                <div class="field"><span class="field-label">Frecuencia</span><input type="text" class="line-input"></div>
+                <div class="field"><span class="field-label">Intensidad</span><input type="text" class="line-input"></div>
+            </div>
+            <div class="form-row"><div class="field"><span class="field-label">Tiempo</span><input type="text" class="line-input"></div></div>
+        </div>
+        <div class="box-float">
+            <div class="box-title-float">Antecedentes gineco-obstétricos</div>
+            <div class="form-row">
+                <div class="field"><span class="field-label">Gestas</span><input type="text" class="line-input"></div>
+                <div class="field-label" style="font-weight:normal;">fueron:</div>
+                <div class="field"><span class="field-label">P</span><input type="text" class="line-input"></div>
+                <div class="field"><span class="field-label">C</span><input type="text" class="line-input"></div>
+                <div class="field"><span class="field-label">A</span><input type="text" class="line-input"></div>
+            </div>
+            <div class="form-row">
+                <div class="field"><span class="field-label">FUM</span><input type="text" class="line-input"></div>
+                <div class="field chk-group"><span class="field-label">Embarazo</span>
+                    <label class="chk-label"><input type="radio" name="emb"> No</label>
+                    <label class="chk-label"><input type="radio" name="emb"> Sí</label>
+                </div>
+                <div class="field"><span class="field-label">SDG</span><input type="text" class="line-input"></div>
+            </div>
+            <div class="form-row">
+                <div class="field chk-group"><span class="field-label">Remplazo hormonal</span>
+                    <label class="chk-label"><input type="radio" name="horm"> No</label>
+                    <label class="chk-label"><input type="radio" name="horm"> Sí</label>
+                </div>
+                <div class="field chk-group" style="margin-left:10px;"><span class="field-label">Anticonceptivos</span>
+                    <label class="chk-label"><input type="radio" name="anti"> No</label>
+                    <label class="chk-label"><input type="radio" name="anti"> Sí</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box-float">
+        <div class="box-title-float">Motivo de consulta</div>
+        <div class="motivo-container">
+            <div class="motivo-lines">
+                <input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input">
+                <input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input">
+                <input type="text" class="line-input"><input type="text" class="line-input">
+            </div>
+            <div class="alicia-box">
+                <p><b>Recordando, dolor (ALICIA), donde:</b></p>
+                <ul style="list-style: none; margin-top: 5px;">
+                    <li>• <b>A</b>ntigüedad</li>
+                    <li>• <b>L</b>ugar: Zona</li>
+                    <li>• <b>I</b>ncidencia: # episodios / frec.</li>
+                    <li>• <b>C</b>aracterísticas</li>
+                    <li>• <b>I</b>ntensidad</li>
+                    <li>• <b>A</b>gravantes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-footer" style="padding-top:10px;">
+        <p style="font-size: 7px; color: var(--utc-light-blue);">
+            ESA: Exploración y sin alteraciones; N/A: No Aplica; PN: Preguntado y negado; ✓: Adecuado.<br>
+            Aa: abuela; Ao: abuelo; Mat: materno; Pat: paterno; Qx: Cirugías; Tx: Tratamientos; G: Gestas; P: Partos; C: Cesárea; A: Abortos. FUM: Fecha última menstruación. SDG: Semanas Gestación
+        </p>
+        <div class="page-num" style="color:var(--utc-blue);">1</div>
+    </div>
+</div>
+
+<div class="page page-2">
+    <div class="box-block">
+        <div class="box-block-title">Objetivos SMART</div>
+        <div class="smart-content">
+            <div class="smart-left">
+                <div style="font-weight: bold; font-size: 12px; margin-bottom: 5px; color: var(--utc-blue);">Objetivo del paciente:</div>
+                <div class="lines-container">
+                    <input type="text" class="line-input">
+                    <input type="text" class="line-input">
+                    <input type="text" class="line-input">
+                    <input type="text" class="line-input">
+                    <input type="text" class="line-input">
+                    <input type="text" class="line-input">
+                    <input type="text" class="line-input">
+                </div>
+                <div class="smart-reminder">
+                    <p style="margin-bottom: 4px;">Recordando, SMART, donde:</p>
+                    <ul style="list-style: none; padding-left: 0; margin-top: 0;">
+                        <li style="margin-bottom: 2px;">• <b>Alcanzable:</b> reales y acorde a lesión.</li>
+                        <li style="margin-bottom: 2px;">• <b>Específico:</b> Establecer tiempo o zona.</li>
+                        <li style="margin-bottom: 2px;">• <b>Relevante:</b> importante para la lesión.</li>
+                        <li style="margin-bottom: 2px;">• <b>Tiempo:</b> plazo en evolución de lesión.</li>
+                        <li style="margin-bottom: 2px;">• <b>Objetivo:</b> mejorar las habilidades.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="smart-right">
+                <div style="display: flex; align-items: flex-end; margin-bottom: 15px;">
+                    <span style="font-weight: bold; font-size: 12px; margin-right: 10px; color: var(--utc-blue);">Objetivo general:</span>
+                    <input type="text" class="line-input" style="flex-grow: 1;">
+                </div>
+
+                <div style="width: 100%; display: flex; flex-direction: column; flex-grow: 1;">
+                    <div class="plazos-header">
+                        <div>Objetivos a corto plazo</div>
+                        <div>Objetivos a mediano plazo</div>
+                        <div>Objetivos a largo plazo</div>
+                    </div>
+                    <div class="plazos-columns">
+                        <div class="plazo-col">
+                            <textarea class="free-text" placeholder="Escribe aquí..."></textarea>
+                        </div>
+                        <div class="plazo-col">
+                            <textarea class="free-text" placeholder="Escribe aquí..."></textarea>
+                        </div>
+                        <div class="plazo-col">
+                            <textarea class="free-text" placeholder="Escribe aquí..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box-block">
+        <div class="box-block-title">Exploración física</div>
+        <div style="width: 100%; overflow-x: auto;">
+            <table class="tabla-exploracion">
+                <tr>
+                    <th colspan="2" style="width: 33.33%;">Observación</th>
+                    <th colspan="2" style="width: 33.33%;">Inspección</th>
+                    <th colspan="2" style="width: 33.33%;">Palpación</th>
+                </tr>
+                <tr>
+                    <td class="lbl-col" rowspan="2">Marcha</td>
+                    <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-col">Cicatriz</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-col">Temperatura</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-col">Hematoma</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-col" rowspan="2">Contractura</td>
+                    <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-col" rowspan="2">Movilidad</td>
+                    <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-col">Edema</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-col">Tumefacción</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-col">Dolor</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-col">Agilidad</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-col">Otro</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-col">Otro</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="box-block">
+        <div class="box-block-title">Estado de la zona</div>
+        <div class="zona-content">
+            <div class="zona-left">
+                <div class="title-ubicacion">Ubicación</div>
+                <div class="image-marker-container">
+                    <img src="Humano_1.png" alt="Ubicación Cuerpo">
+                </div>
+            </div>
+            <div class="zona-right">
+                <div style="display: flex; align-items: center; flex-wrap: wrap; margin-bottom:5px;">
+                    <div style="width: 90px; font-weight: bold; font-size: 11px; color: var(--utc-blue);">Color:</div>
+                    <div class="chk-group">
+                        <label class="chk-label"><input type="checkbox"> Hematoma</label>
+                        <label class="chk-label"><input type="checkbox"> Equimosis</label>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; flex-wrap: wrap; margin-bottom:5px;">
+                    <div style="width: 90px; font-weight: bold; font-size: 11px; color: var(--utc-blue);">Estado:</div>
+                    <div class="chk-group">
+                        <label class="chk-label"><input type="checkbox"> Seca</label>
+                        <label class="chk-label"><input type="checkbox"> Brillante</label>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; flex-wrap: wrap; margin-bottom:5px;">
+                    <div style="width: 90px; font-weight: bold; font-size: 11px; color: var(--utc-blue);">Edema:</div>
+                    <div class="chk-group">
+                        <label class="chk-label"><input type="checkbox"> Leve</label>
+                        <label class="chk-label"><input type="checkbox"> Moderado</label>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; flex-wrap: wrap; margin-bottom:5px;">
+                    <div style="width: 90px; font-weight: bold; font-size: 11px; color: var(--utc-blue);">Cicatriz:</div>
+                    <div class="chk-group">
+                        <label class="chk-label"><input type="checkbox"> Hipertrófica</label>
+                        <label class="chk-label" style="margin-left: 6px;"><input type="checkbox"> Queloide</label>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; flex-wrap: wrap; margin-bottom:5px;">
+                    <div style="width: 90px; font-weight: bold; font-size: 11px; color: var(--utc-blue);">Heridas:</div>
+                    <div class="chk-group">
+                        <label class="chk-label"><input type="checkbox"> Escaras</label>
+                        <label class="chk-label" style="margin-left: 20px;"><input type="checkbox"> Tumefacciones</label>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: flex-end; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                    <div style="font-weight: bold; font-size: 11px; color: var(--utc-blue);">Otro:</div><input type="text" class="line-input" style="flex: 1;">
+                    <div style="font-weight: bold; font-size: 11px; color: var(--utc-blue);">Severidad:</div><input type="text" class="line-input" style="flex: 1;">
+                    <div style="font-weight: bold; font-size: 11px; color: var(--utc-blue);">Zona:</div><input type="text" class="line-input" style="flex: 2;">
+                </div>
+                <div style="display: flex; align-items: flex-end; gap: 10px; margin-top: 5px; flex-wrap: wrap;">
+                    <div style="font-weight: bold; font-size: 11px; color: var(--utc-blue);">Otro:</div><input type="text" class="line-input" style="flex: 1;">
+                    <div style="font-weight: bold; font-size: 11px; color: var(--utc-blue);">Severidad:</div><input type="text" class="line-input" style="flex: 1;">
+                    <div style="font-weight: bold; font-size: 11px; color: var(--utc-blue);">Zona:</div><input type="text" class="line-input" style="flex: 2;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <div>ESA: Explorado y sin alteraciones; N/A: No Aplica; PN: Preguntado y negado; ✓: Adecuado.</div>
+        <div class="page-num">2</div>
+    </div>
+</div>
+
+<div class="page page-3">
+    <div class="row-split">
+        <div class="box-block sensibilidad-box">
+            <div class="box-block-title">Exploración de sensibilidad</div>
+            <div style="flex: 1; display: flex; flex-direction: column;">
+                <div class="image-marker-container">
+                    <img src="Humano_2.png" alt="Dermatomas Cuerpo">
+                </div>
+            </div>
+        </div>
+
+        <div class="box-block neuro-box">
+            <div class="box-block-title">Exploración neuromuscular</div>
+            <div style="flex: 1; overflow-x: auto;">
+                <table>
+                    <tr>
+                        <th class="col-hallazgos">Hallazgos por dermatomas</th>
+                        <th colspan="2">Valoración de reflejos</th>
+                        <th class="col-tono">Valoración de tono</th>
+                    </tr>
+                    <tr>
+                        <td rowspan="4"><textarea class="free-text"></textarea></td>
+                        <td class="lbl-reflejo">Bicipital</td>
+                        <td><textarea class="free-text"></textarea></td>
+                        <td rowspan="4"><textarea class="free-text"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td class="lbl-reflejo">Tricipital</td>
+                        <td><textarea class="free-text"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td class="lbl-reflejo">Rotuliano</td>
+                        <td><textarea class="free-text"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td class="lbl-reflejo">Aquileo</td>
+                        <td><textarea class="free-text"></textarea></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="box-block" style="flex: none;">
+        <div class="box-block-title">Movilidad</div>
+        <div style="overflow-x: auto;">
+            <table class="movilidad-table">
+                <tr>
+                    <th colspan="5" class="divider-right">Derecho</th>
+                    <th colspan="5">Izquierdo</th>
+                </tr>
+                <tr>
+                    <th class="lbl-movimiento">Movimiento</th>
+                    <th colspan="2" class="inp-fuerza-arco">Fuerza</th>
+                    <th colspan="2" class="inp-fuerza-arco divider-right">Arco</th>
+                    <th class="lbl-movimiento">Movimiento</th>
+                    <th colspan="2" class="inp-fuerza-arco">Fuerza</th>
+                    <th colspan="2" class="inp-fuerza-arco">Arco</th>
+                </tr>
+                <tr>
+                    <td class="lbl-zona">Zona a valorar:</td>
+                    <td class="sub-col"><textarea class="free-text"></textarea></td>
+                    <td class="sub-col"><textarea class="free-text"></textarea></td>
+                    <td class="sub-col"><textarea class="free-text"></textarea></td>
+                    <td class="sub-col divider-right"><textarea class="free-text"></textarea></td>
+
+                    <td class="lbl-zona">Zona a valorar:</td>
+                    <td class="sub-col"><textarea class="free-text"></textarea></td>
+                    <td class="sub-col"><textarea class="free-text"></textarea></td>
+                    <td class="sub-col"><textarea class="free-text"></textarea></td>
+                    <td class="sub-col"><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-movimiento">Flexión</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td class="divider-right"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-movimiento">Flexión</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-movimiento">Extensión</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td class="divider-right"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-movimiento">Extensión</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-movimiento">Abducción</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td class="divider-right"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-movimiento">Abducción</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-movimiento">Rotación interna</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td class="divider-right"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-movimiento">Rotación interna</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-movimiento">Rotación externa</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td class="divider-right"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-movimiento">Rotación externa</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-movimiento">Desviación radial</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td class="divider-right"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-movimiento">Desviación radial</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-movimiento">Desviación cubital</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td class="divider-right"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-movimiento">Desviación cubital</td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                    <td><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="obs-row divider-right">
+                        <span class="obs-label">Observaciones:</span>
+                        <textarea class="free-text" style="display:inline-block; width:calc(100% - 95px); min-height:40px; padding:2px;"></textarea>
+                    </td>
+                    <td colspan="5" class="obs-row">
+                        <span class="obs-label">Observaciones:</span>
+                        <textarea class="free-text" style="display:inline-block; width:calc(100% - 95px); min-height:40px; padding:2px;"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="10" class="nota-footer">
+                        MMSS: Miembros superiores MMII: Miembros inferiores CV: columna vertebral. Especificar la zona a valorar ejemplo: MMSS Hombro / CV cervical / MMII tobillo
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="box-block">
+        <div class="box-block-title">Pruebas específicas</div>
+        <div style="overflow-x: auto;">
+            <table style="height: auto;">
+                <tr>
+                    <th class="col-prueba">Pruebas</th>
+                    <th class="col-hallazgo">Hallazgos</th>
+                </tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+                <tr><td><textarea class="free-text"></textarea></td><td><textarea class="free-text"></textarea></td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="signatures-area">
+        <div class="signature-line">Nombre, matrícula y firma del alumno</div>
+        <div class="signature-line">Nombre, cédula y firma del docente responsable</div>
+    </div>
+
+    <div class="page-footer">
+        <div>ESA: Explorado y sin alteraciones; N/A: No Aplica; PN: Preguntado y negado; ✓: Adecuado.</div>
+        <div class="page-num">3</div>
+    </div>
+</div>
+
+<script>
+    // Lógica dinámica para TODOS los contenedores de imágenes en el archivo
+    const markerContainers = document.querySelectorAll('.image-marker-container');
+
+    markerContainers.forEach(container => {
+        container.addEventListener('click', function(e) {
+            // Evitar agregar un marcador sobre otro
+            if (e.target.classList.contains('marker')) return;
+
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const marker = document.createElement('div');
+            marker.classList.add('marker');
+            marker.innerText = '✖';
+
+            marker.style.left = x + 'px';
+            marker.style.top = y + 'px';
+
+            container.appendChild(marker);
+        });
+    });
+
+    // Esta función borrará todos los marcadores en ambos diagramas
+    function clearMarkers() {
+        const markers = document.querySelectorAll('.marker');
+        markers.forEach(marker => marker.remove());
+    }
+</script>
+
+</body>
+</html>
