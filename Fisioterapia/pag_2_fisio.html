@@ -19,7 +19,7 @@
             padding: 20px;
         }
 
-        /* Contenedor de la Hoja (Tamaño Carta) */
+        /* Contenedor de la Hoja (Tamaño Carta por defecto) */
         .page {
             background-color: #fff;
             width: 100%;
@@ -71,13 +71,13 @@
 
         /* TEXTAREAS INVISIBLES (Para tablas y objetivos) */
         .free-text {
-            border: none !important; /* Forza a que no tenga bordes feos */
+            border: none !important;
             background: transparent !important;
             box-shadow: none !important;
             font-size: 11px;
             color: #000;
             outline: none !important;
-            resize: none; /* Evita que el usuario deforme la caja */
+            resize: none;
             width: 100%;
             height: 100%;
             min-height: 24px;
@@ -143,6 +143,15 @@
         .smart-reminder ul { list-style: none; padding-left: 0; margin-top: 4px;}
         .smart-reminder li { margin-bottom: 3px; }
 
+        /* Contenedor responsivo para las columnas de plazos */
+        .plazos-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
         .plazos-header {
             display: flex;
             background-color: var(--utc-blue);
@@ -185,6 +194,13 @@
         /* -------------------------------------
            SECCIÓN 2: EXPLORACIÓN FÍSICA
         -------------------------------------- */
+        /* Contenedor responsivo para la tabla */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch; /* Suaviza el scroll en iOS */
+        }
+
         .tabla-exploracion {
             width: 100%;
             border-collapse: collapse;
@@ -202,7 +218,7 @@
         .tabla-exploracion td {
             border: 1px solid var(--utc-blue);
             height: 30px;
-            padding: 0; /* Sin padding para que el textarea ocupe el 100% */
+            padding: 0;
             vertical-align: middle;
         }
         .tabla-exploracion td:first-child { border-left: none; }
@@ -276,17 +292,64 @@
         }
         .page-num { font-size: 14px; font-weight: bold; }
 
-        /* IMPRESIÓN */
+        /* -------------------------------------
+           MEDIA QUERIES (RESPONSIVE PARA MÓVILES)
+        -------------------------------------- */
+        @media screen and (max-width: 768px) {
+            body { padding: 10px; }
+            .page {
+                padding: 15px;
+                height: auto;
+                min-height: auto;
+                border-radius: 12px; /* Aspecto de tarjeta en móviles */
+                max-width: 100%;
+            }
+
+            /* Apilar sección SMART */
+            .smart-content { flex-direction: column; min-height: auto; }
+            .smart-left {
+                width: 100%;
+                border-right: none;
+                border-bottom: 2px dashed var(--utc-blue);
+                padding-bottom: 15px;
+            }
+            .smart-right { width: 100%; padding: 15px 0 0 0; }
+
+            /* Forzar un ancho mínimo interno para que haga scroll horizontal táctil y no se aplasten los textareas */
+            .plazos-header, .plazos-columns { min-width: 600px; }
+
+            /* Forzar scroll en la tabla */
+            .tabla-exploracion { min-width: 650px; }
+
+            /* Apilar sección Estado de la Zona */
+            .zona-content { flex-direction: column; }
+            .zona-left {
+                width: 100%;
+                border-bottom: 2px dashed var(--utc-blue);
+                padding-bottom: 20px;
+                margin-bottom: 15px;
+            }
+            .zona-right { width: 100%; padding-left: 0; }
+
+            /* Permitir que los inputs de 'Otro' bajen de línea si no caben */
+            .otros-row { flex-wrap: wrap; }
+            .otros-row input.line-input { min-width: 80px; }
+        }
+
+        /* -------------------------------------
+           IMPRESIÓN (Mantiene el formato carta exacto)
+        -------------------------------------- */
         @media print {
             @page { size: letter; margin: 0; }
             body { padding: 0; background: none; }
-            .page { box-shadow: none; border: none; }
+            .page { box-shadow: none; border: none; border-radius: 0; max-width: 215.9mm; }
             input[type="checkbox"] { border: 1px solid var(--utc-blue) !important; }
             textarea, input { color: #000 !important; }
             ::-webkit-input-placeholder { color: transparent; }
             :-moz-placeholder { color: transparent; }
             ::-moz-placeholder { color: transparent; }
             :-ms-input-placeholder { color: transparent; }
+            .table-responsive, .plazos-wrapper { overflow-x: visible; }
         }
     </style>
 </head>
@@ -327,16 +390,18 @@
                     <input type="text" class="line-input" style="flex-grow: 1;">
                 </div>
 
-                <div class="plazos-header">
-                    <div>Objetivos a corto plazo</div>
-                    <div>Objetivos a mediano plazo</div>
-                    <div>Objetivos a largo plazo</div>
-                </div>
+                <div class="plazos-wrapper">
+                    <div class="plazos-header">
+                        <div>Objetivos a corto plazo</div>
+                        <div>Objetivos a mediano plazo</div>
+                        <div>Objetivos a largo plazo</div>
+                    </div>
 
-                <div class="plazos-columns">
-                    <textarea placeholder="Escribe aquí..."></textarea>
-                    <textarea placeholder="Escribe aquí..."></textarea>
-                    <textarea placeholder="Escribe aquí..."></textarea>
+                    <div class="plazos-columns">
+                        <textarea placeholder="Escribe aquí..."></textarea>
+                        <textarea placeholder="Escribe aquí..."></textarea>
+                        <textarea placeholder="Escribe aquí..."></textarea>
+                    </div>
                 </div>
             </div>
         </div>
@@ -344,45 +409,47 @@
 
     <div class="box">
         <div class="box-header">Exploración física</div>
-        <table class="tabla-exploracion">
-            <tr>
-                <th colspan="2" style="width: 33.33%;">Observación</th>
-                <th colspan="2" style="width: 33.33%;">Inspección</th>
-                <th colspan="2" style="width: 33.33%;">Palpación</th>
-            </tr>
-            <tr>
-                <td class="lbl-col" rowspan="2">Marcha</td>
-                <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
-                <td class="lbl-col">Cicatriz</td>
-                <td class="inp-col"><textarea class="free-text"></textarea></td>
-                <td class="lbl-col" rowspan="2">Temperatura</td>
-                <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
-            </tr>
-            <tr>
-                <td class="lbl-col">Hematoma</td>
-                <td class="inp-col"><textarea class="free-text"></textarea></td>
-            </tr>
-            <tr>
-                <td class="lbl-col" rowspan="2">Movilidad</td>
-                <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
-                <td class="lbl-col">Edema</td>
-                <td class="inp-col"><textarea class="free-text"></textarea></td>
-                <td class="lbl-col" rowspan="2">Contractura</td>
-                <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
-            </tr>
-            <tr>
-                <td class="lbl-col">Tumefacción</td>
-                <td class="inp-col"><textarea class="free-text"></textarea></td>
-            </tr>
-            <tr>
-                <td class="lbl-col">Agilidad</td>
-                <td class="inp-col"><textarea class="free-text"></textarea></td>
-                <td class="lbl-col">Otro</td>
-                <td class="inp-col"><textarea class="free-text"></textarea></td>
-                <td class="lbl-col">Dolor<br><br>Otro</td>
-                <td class="inp-col"><textarea class="free-text"></textarea></td>
-            </tr>
-        </table>
+        <div class="table-responsive">
+            <table class="tabla-exploracion">
+                <tr>
+                    <th colspan="2" style="width: 33.33%;">Observación</th>
+                    <th colspan="2" style="width: 33.33%;">Inspección</th>
+                    <th colspan="2" style="width: 33.33%;">Palpación</th>
+                </tr>
+                <tr>
+                    <td class="lbl-col" rowspan="2">Marcha</td>
+                    <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-col">Cicatriz</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-col" rowspan="2">Temperatura</td>
+                    <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-col">Hematoma</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-col" rowspan="2">Movilidad</td>
+                    <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-col">Edema</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-col" rowspan="2">Contractura</td>
+                    <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-col">Tumefacción</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="lbl-col">Agilidad</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-col">Otro</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                    <td class="lbl-col">Dolor<br><br>Otro</td>
+                    <td class="inp-col"><textarea class="free-text"></textarea></td>
+                </tr>
+            </table>
+        </div>
     </div>
 
     <div class="box">
