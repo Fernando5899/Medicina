@@ -1,0 +1,36 @@
+# --- IDE & Editores (JetBrains/WebStorm) ---
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+gen/
+
+# --- Archivos de Sistema ---
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+*.lnk
+
+# --- Archivos de Node.js / Web (Por si agregas paquetes después) ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.local
+
+# --- Documentación Sensible / Privacidad ---
+# Ignora archivos PDF que puedan contener datos personales
+*.pdf
+# Si prefieres ignorar carpetas completas de datos:
+# Historia_Clinica/
+
+# --- Temporales de Compilación ---
+*.tmp
+*.temp
+*.swp
+*.bak

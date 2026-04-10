@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historia Clínica Fisioterapéutica - Pág 2</title>
+    <style>
+        /* Configuraciones Generales */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --utc-blue: #2A4B8C;
+            --utc-light-blue: #5575B3;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #525659;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Contenedor de la Hoja (Tamaño Carta) */
+        .page {
+            background-color: #fff;
+            width: 100%;
+            max-width: 215.9mm;
+            min-height: 279.4mm;
+            padding: 12mm 15mm;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            color: var(--utc-blue);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+        }
+
+        /* CAJAS PRINCIPALES */
+        .box {
+            border: 2px solid var(--utc-blue);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: transparent;
+            width: 100%;
+        }
+
+        .box-header {
+            background-color: var(--utc-blue);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            padding: 6px 0;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* INPUTS TIPO LÍNEA (Para textos fuera de tablas) */
+        input.line-input {
+            border: none;
+            border-bottom: 1px solid var(--utc-blue);
+            background: transparent;
+            font-size: 11px;
+            color: #000;
+            height: 16px;
+            outline: none;
+            width: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        /* TEXTAREAS INVISIBLES (Para tablas y objetivos) */
+        .free-text {
+            border: none !important; /* Forza a que no tenga bordes feos */
+            background: transparent !important;
+            box-shadow: none !important;
+            font-size: 11px;
+            color: #000;
+            outline: none !important;
+            resize: none; /* Evita que el usuario deforme la caja */
+            width: 100%;
+            height: 100%;
+            min-height: 24px;
+            font-family: Arial, sans-serif;
+            padding: 6px;
+            box-sizing: border-box;
+            display: block;
+        }
+
+        /* CHECKBOXES */
+        .chk-group { display: flex; align-items: center; gap: 15px; flex-wrap: wrap;}
+        .chk-label { display: flex; align-items: center; cursor: pointer; font-size: 11px; color: var(--utc-blue);}
+        input[type="checkbox"] {
+            appearance: none; -webkit-appearance: none;
+            width: 11px; height: 11px;
+            border: 1px solid var(--utc-blue);
+            margin-right: 5px; position: relative; cursor: pointer;
+            display: grid; place-content: center;
+        }
+        input[type="checkbox"]:checked::before {
+            content: '✓';
+            font-size: 10px; color: var(--utc-blue); font-weight: bold;
+        }
+
+        /* -------------------------------------
+           SECCIÓN 1: OBJETIVOS SMART
+        -------------------------------------- */
+        .smart-content {
+            display: flex;
+            flex-grow: 1;
+            min-height: 380px;
+        }
+
+        .smart-left {
+            width: 28%;
+            border-right: 2px solid var(--utc-blue);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .smart-right {
+            width: 72%;
+            display: flex;
+            flex-direction: column;
+            padding: 10px 10px 0 10px;
+        }
+
+        .lines-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 5px;
+            flex-grow: 1;
+        }
+
+        .smart-reminder {
+            font-size: 9px;
+            color: var(--utc-blue);
+            margin-top: 15px;
+            line-height: 1.3;
+        }
+        .smart-reminder ul { list-style: none; padding-left: 0; margin-top: 4px;}
+        .smart-reminder li { margin-bottom: 3px; }
+
+        .plazos-header {
+            display: flex;
+            background-color: var(--utc-blue);
+            color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 15px;
+            -webkit-print-color-adjust: exact;
+        }
+        .plazos-header div {
+            flex: 1;
+            text-align: center;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 4px 0;
+            border-right: 1px solid white;
+        }
+        .plazos-header div:last-child { border-right: none; }
+
+        .plazos-columns {
+            display: flex;
+            flex-grow: 1;
+            margin-top: 5px;
+        }
+        .plazos-columns textarea {
+            flex: 1;
+            border: none;
+            border-right: 1px solid var(--utc-blue);
+            background: transparent;
+            resize: none;
+            outline: none;
+            padding: 8px;
+            font-size: 11px;
+            font-family: Arial, sans-serif;
+            color: #000;
+        }
+        .plazos-columns textarea:last-child { border-right: none; }
+
+
+        /* -------------------------------------
+           SECCIÓN 2: EXPLORACIÓN FÍSICA
+        -------------------------------------- */
+        .tabla-exploracion {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+        .tabla-exploracion th {
+            color: var(--utc-blue);
+            font-size: 13px;
+            padding: 6px;
+            border-bottom: 2px solid var(--utc-blue);
+            border-right: 1px solid var(--utc-blue);
+        }
+        .tabla-exploracion th:last-child { border-right: none; }
+
+        .tabla-exploracion td {
+            border: 1px solid var(--utc-blue);
+            height: 30px;
+            padding: 0; /* Sin padding para que el textarea ocupe el 100% */
+            vertical-align: middle;
+        }
+        .tabla-exploracion td:first-child { border-left: none; }
+        .tabla-exploracion td:last-child { border-right: none; }
+        tr:last-child td { border-bottom: none; }
+
+        .lbl-col { color: var(--utc-blue); font-size: 11px; width: 12%; text-align: center; padding: 5px;}
+        .inp-col { width: 21%; }
+
+        /* -------------------------------------
+           SECCIÓN 3: ESTADO DE LA ZONA
+        -------------------------------------- */
+        .zona-content {
+            display: flex;
+            padding: 15px;
+            min-height: 220px;
+        }
+
+        .zona-left {
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .zona-left .title-ubicacion {
+            color: var(--utc-blue);
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .zona-right {
+            width: 70%;
+            padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .form-row-zona {
+            display: flex;
+            align-items: center;
+        }
+        .form-row-zona .lbl {
+            width: 90px;
+            font-weight: bold;
+            font-size: 11px;
+            color: var(--utc-blue);
+        }
+
+        .otros-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        .otros-row .lbl { font-weight: bold; font-size: 11px; color: var(--utc-blue); }
+
+        /* FOOTER */
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: auto;
+            font-size: 9px;
+            color: var(--utc-blue);
+            border-top: 1px solid var(--utc-light-blue);
+            padding-top: 8px;
+        }
+        .page-num { font-size: 14px; font-weight: bold; }
+
+        /* IMPRESIÓN */
+        @media print {
+            @page { size: letter; margin: 0; }
+            body { padding: 0; background: none; }
+            .page { box-shadow: none; border: none; }
+            input[type="checkbox"] { border: 1px solid var(--utc-blue) !important; }
+            textarea, input { color: #000 !important; }
+            ::-webkit-input-placeholder { color: transparent; }
+            :-moz-placeholder { color: transparent; }
+            ::-moz-placeholder { color: transparent; }
+            :-ms-input-placeholder { color: transparent; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+
+    <div class="box">
+        <div class="box-header">Objetivos SMART</div>
+        <div class="smart-content">
+            <div class="smart-left">
+                <div style="font-weight: bold; font-size: 11px; margin-bottom: 5px;">Objetivo del paciente:</div>
+                <div class="lines-container">
+                    <input type="text" class="line-input">
+                    <input type="text" class="line-input">
+                    <input type="text" class="line-input">
+                    <input type="text" class="line-input">
+                    <input type="text" class="line-input">
+                    <input type="text" class="line-input">
+                    <input type="text" class="line-input">
+                    <input type="text" class="line-input">
+                </div>
+                <div class="smart-reminder">
+                    <p>Recordando, SMART, donde:</p>
+                    <ul>
+                        <li>• <b>Alcanzable:</b> objetivos reales y acorde a la lesión.</li>
+                        <li>• <b>Específico:</b> Establecer un tiempo o zona a trabajar.</li>
+                        <li>• <b>Relevante:</b> que sea importante para la lesión y el px.</li>
+                        <li>• <b>Tiempo:</b> plazo contemplado dentro de la evolución de la lesión.</li>
+                        <li>• <b>Objetivo:</b> mejorar las habilidades.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="smart-right">
+                <div style="display: flex; align-items: flex-end; margin-bottom: 10px;">
+                    <span style="font-weight: bold; font-size: 11px; margin-right: 5px;">Objetivo general:</span>
+                    <input type="text" class="line-input" style="flex-grow: 1;">
+                </div>
+
+                <div class="plazos-header">
+                    <div>Objetivos a corto plazo</div>
+                    <div>Objetivos a mediano plazo</div>
+                    <div>Objetivos a largo plazo</div>
+                </div>
+
+                <div class="plazos-columns">
+                    <textarea placeholder="Escribe aquí..."></textarea>
+                    <textarea placeholder="Escribe aquí..."></textarea>
+                    <textarea placeholder="Escribe aquí..."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-header">Exploración física</div>
+        <table class="tabla-exploracion">
+            <tr>
+                <th colspan="2" style="width: 33.33%;">Observación</th>
+                <th colspan="2" style="width: 33.33%;">Inspección</th>
+                <th colspan="2" style="width: 33.33%;">Palpación</th>
+            </tr>
+            <tr>
+                <td class="lbl-col" rowspan="2">Marcha</td>
+                <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
+                <td class="lbl-col">Cicatriz</td>
+                <td class="inp-col"><textarea class="free-text"></textarea></td>
+                <td class="lbl-col" rowspan="2">Temperatura</td>
+                <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
+            </tr>
+            <tr>
+                <td class="lbl-col">Hematoma</td>
+                <td class="inp-col"><textarea class="free-text"></textarea></td>
+            </tr>
+            <tr>
+                <td class="lbl-col" rowspan="2">Movilidad</td>
+                <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
+                <td class="lbl-col">Edema</td>
+                <td class="inp-col"><textarea class="free-text"></textarea></td>
+                <td class="lbl-col" rowspan="2">Contractura</td>
+                <td class="inp-col" rowspan="2"><textarea class="free-text"></textarea></td>
+            </tr>
+            <tr>
+                <td class="lbl-col">Tumefacción</td>
+                <td class="inp-col"><textarea class="free-text"></textarea></td>
+            </tr>
+            <tr>
+                <td class="lbl-col">Agilidad</td>
+                <td class="inp-col"><textarea class="free-text"></textarea></td>
+                <td class="lbl-col">Otro</td>
+                <td class="inp-col"><textarea class="free-text"></textarea></td>
+                <td class="lbl-col">Dolor<br><br>Otro</td>
+                <td class="inp-col"><textarea class="free-text"></textarea></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="box">
+        <div class="box-header">Estado de la zona</div>
+        <div class="zona-content">
+            <div class="zona-left">
+                <div class="title-ubicacion">Ubicación</div>
+                <img src="Humano_1.png" alt="Ubicación Cuerpo" style="max-width: 100%; height: 180px; object-fit: contain;">
+            </div>
+
+            <div class="zona-right">
+                <div class="form-row-zona">
+                    <div class="lbl">Color:</div>
+                    <div class="chk-group">
+                        <label class="chk-label"><input type="checkbox"> Hematoma</label>
+                        <label class="chk-label"><input type="checkbox"> Equimosis</label>
+                    </div>
+                </div>
+                <div class="form-row-zona">
+                    <div class="lbl">Estado:</div>
+                    <div class="chk-group">
+                        <label class="chk-label"><input type="checkbox"> Seca</label>
+                        <label class="chk-label"><input type="checkbox"> Brillante</label>
+                    </div>
+                </div>
+                <div class="form-row-zona">
+                    <div class="lbl">Edema:</div>
+                    <div class="chk-group">
+                        <label class="chk-label"><input type="checkbox"> Leve</label>
+                        <label class="chk-label"><input type="checkbox"> Moderado</label>
+                    </div>
+                </div>
+                <div class="form-row-zona">
+                    <div class="lbl">Cicatriz:</div>
+                    <div class="chk-group">
+                        <label class="chk-label"><input type="checkbox"> Hipertrófica</label>
+                        <label class="chk-label" style="margin-left: 6px;"><input type="checkbox"> Queloide</label>
+                    </div>
+                </div>
+                <div class="form-row-zona">
+                    <div class="lbl">Heridas:</div>
+                    <div class="chk-group">
+                        <label class="chk-label"><input type="checkbox"> Escaras</label>
+                        <label class="chk-label" style="margin-left: 20px;"><input type="checkbox"> Tumefacciones</label>
+                    </div>
+                </div>
+
+                <div class="otros-row" style="margin-top: 15px;">
+                    <div class="lbl">Otro:</div>
+                    <input type="text" class="line-input" style="flex: 1;">
+                    <div class="lbl">Severidad:</div>
+                    <input type="text" class="line-input" style="flex: 1;">
+                    <div class="lbl">Zona:</div>
+                    <input type="text" class="line-input" style="flex: 2;">
+                </div>
+                <div class="otros-row">
+                    <div class="lbl">Otro:</div>
+                    <input type="text" class="line-input" style="flex: 1;">
+                    <div class="lbl">Severidad:</div>
+                    <input type="text" class="line-input" style="flex: 1;">
+                    <div class="lbl">Zona:</div>
+                    <input type="text" class="line-input" style="flex: 2;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div>ESA: Explorado y sin alteraciones; N/A: No Aplica; PN: Preguntado y negado; ✓: Adecuado.</div>
+        <div class="page-num">2</div>
+    </div>
+
+</div>
+
+</body>
+</html>

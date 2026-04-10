@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historia Clínica Nutricional - UTC</title>
+    <style>
+        /* Configuraciones Generales */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --utc-blue: #2A4B8C;
+            --utc-light-blue: #5575B3;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            background-color: #525659;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Contenedor de la Hoja (Responsive y tamaño Carta) */
+        .page {
+            background-color: #fff;
+            width: 100%;
+            max-width: 215.9mm;
+            height: auto;
+            min-height: 279.4mm;
+            padding: 10mm 12mm;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            position: relative;
+            color: var(--utc-light-blue);
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        .header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 15px; }
+        .logo { display: flex; flex-direction: column; color: var(--utc-blue); width: 120px;}
+        .logo h1 { font-size: 38px; letter-spacing: -2px; margin-bottom: -5px; font-weight: 900; }
+        .logo p { font-size: 8px; line-height: 1; font-weight: bold; }
+
+        .title-section { flex-grow: 1; margin-left: 15px; display: flex; flex-direction: column;}
+        .main-title {
+            background-color: var(--utc-blue);
+            color: #fff;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            padding: 6px 20px;
+            border-radius: 20px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .title-sub-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 5px;
+            padding: 0 10px;
+        }
+        .address { font-size: 10px; color: var(--utc-light-blue); font-weight: bold;}
+        .fecha-container { display: flex; align-items: flex-end; width: 140px; }
+
+        /* CAJAS REDONDEADAS */
+        .box {
+            border: 2px solid var(--utc-blue);
+            border-radius: 12px;
+            position: relative;
+            padding: 12px 10px 8px 10px;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            background: transparent;
+            width: 100%;
+        }
+        .box-title {
+            position: absolute;
+            top: -11px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--utc-blue);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 15px;
+            border-radius: 10px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            white-space: nowrap;
+        }
+        .box-title.left-aligned { left: 15px; transform: none; }
+
+        /* TEXTOS E INPUTS PARA ESCRIBIR */
+        .form-row { display: flex; flex-wrap: wrap; gap: 5px 15px; align-items: flex-end; margin-bottom: 6px; }
+        .field { display: flex; align-items: flex-end; flex-grow: 1; }
+        .field-label { font-weight: bold; color: var(--utc-blue); margin-right: 5px; white-space: nowrap; }
+
+        input.line-input {
+            border: none;
+            border-bottom: 1px solid var(--utc-light-blue);
+            background: transparent;
+            font-family: inherit;
+            font-size: 10px;
+            color: #000;
+            flex-grow: 1;
+            height: 14px;
+            outline: none;
+            padding: 0 2px;
+            width: 100%;
+        }
+
+        /* CHECKBOXES Y RADIOS INTERACTIVOS */
+        .chk-group { display: flex; align-items: center; gap: 5px; color: var(--utc-light-blue); flex-wrap: wrap; }
+        .chk-label { display: flex; align-items: center; cursor: pointer; white-space: nowrap; font-weight: bold;}
+
+        input[type="checkbox"], input[type="radio"] {
+            appearance: none; -webkit-appearance: none;
+            width: 10px; height: 10px;
+            border: 1px solid var(--utc-blue);
+            margin-right: 3px; position: relative; top: 0px; cursor: pointer;
+        }
+        input[type="checkbox"]:checked::after, input[type="radio"]:checked::after {
+            content: '✓'; position: absolute; top: -3px; left: 0px;
+            font-size: 11px; color: var(--utc-blue); font-weight: bold;
+        }
+
+        /* TABLAS INTERNAS */
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: center; }
+        th, td { border: 1px solid var(--utc-light-blue); padding: 0; font-size: 9px; height: 16px; }
+        th { color: var(--utc-blue); font-weight: bold; padding: 2px; }
+        .text-left { text-align: left; padding-left: 4px; }
+
+        input.table-input {
+            width: 100%; height: 100%; border: none; background: transparent;
+            text-align: center; font-size: 9px; outline: none; padding: 0 2px; color: #000;
+        }
+
+        /* Checkbox centrado para tablas específicas */
+        .cell-chk { margin: 0 auto !important; display: block; }
+
+        /* MULTILINEAS */
+        .blank-lines { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+        .blank-lines input.line-input { border-bottom: 1.5px solid var(--utc-light-blue); margin-bottom: 2px;}
+
+        /* LAYOUTS ESPECÍFICOS */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid-60-40 { display: grid; grid-template-columns: 60% 38%; gap: 2%; }
+        .flex-container { display: flex; gap: 12px; margin-top: 15px; }
+
+        .full-width-title {
+            background-color: var(--utc-blue);
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 4px 0;
+            text-align: center;
+            width: 100%;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            min-width: max-content; /* Previene cortes en scroll */
+        }
+
+        /* SECCIÓN BRISTOL */
+        .bristol-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .bristol-img {
+            width: 100%;
+            max-height: 75px;
+            object-fit: contain;
+            margin-top: 5px;
+            display: block;
+        }
+        .bristol-selectors {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            padding: 0 6%;
+            margin-top: 2px;
+            gap: 5px;
+        }
+
+        /* FOOTER */
+        .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; font-size: 7px; color: var(--utc-light-blue); }
+        .footer p { line-height: 1.2; }
+        .page-num { font-size: 14px; font-weight: bold; color: var(--utc-blue); }
+
+        /* MEDIA QUERIES PARA RESPONSIVE (MÓVILES Y TABLETS) */
+        @media (max-width: 768px) {
+            body { padding: 10px; background-color: #fff; }
+            .page {
+                padding: 15px;
+                box-shadow: none;
+                border-radius: 0;
+                overflow: visible; /* Permite que el contenido dictamine el alto real */
+            }
+            .header { flex-direction: column; align-items: center; text-align: center; }
+            .logo { align-items: center; margin-bottom: 15px; }
+            .title-section { margin-left: 0; }
+            .title-sub-row { flex-direction: column; gap: 10px; align-items: center; }
+            .fecha-container { width: 100%; justify-content: center; margin-top: 5px; }
+
+            /* Ajuste de cuadrículas y flex a columnas simples */
+            .grid-2, .grid-60-40 { grid-template-columns: 1fr; gap: 15px; }
+            .flex-container { flex-direction: column; }
+
+            /* Apilar inputs en dispositivos pequeños */
+            .form-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .field { width: 100%; }
+            .box-title.left-aligned { left: 50%; transform: translateX(-50%); } /* Centrar títulos de caja */
+
+            table { min-width: 600px; } /* Fuerza el scroll horizontal para que no se aplaste la tabla */
+            .footer { flex-direction: column; align-items: center; text-align: center; gap: 15px; }
+        }
+
+        /* MANTENER FORMATO EXACTO PARA IMPRESIÓN */
+        @media print {
+            @page { size: letter; margin: 0; }
+            body { padding: 0; background: none; }
+            .page {
+                box-shadow: none;
+                border: none;
+                max-width: 215.9mm;
+                height: 279.4mm;
+                overflow: hidden;
+            }
+            input[type="checkbox"], input[type="radio"] { border: 1px solid var(--utc-blue) !important; }
+            input.line-input, input.table-input { color: #000; }
+            ::-webkit-input-placeholder { color: transparent; }
+            .table-responsive { overflow: visible; }
+            table { min-width: 100%; }
+            .grid-2 { grid-template-columns: 1fr 1fr; }
+            .grid-60-40 { grid-template-columns: 60% 38%; }
+            .flex-container { flex-direction: row; }
+            .form-row { flex-direction: row; align-items: flex-end; }
+            .field { width: auto; }
+            .header { flex-direction: row; }
+            .title-section { margin-left: 15px; }
+            .title-sub-row { flex-direction: row; }
+            .box-title.left-aligned { left: 15px; transform: none; }
+            .footer { flex-direction: row; align-items: flex-end; text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+
+    <div class="header">
+        <div class="logo">
+            <h1>utc</h1>
+            <p>Universidad<br>Tres Culturas</p>
+        </div>
+        <div class="title-section">
+            <div class="main-title">Historia Clínica Nutricional</div>
+            <div class="title-sub-row">
+                <div class="address">Av. Insurgentes Sur 92, Juárez, Cuauhtémoc, 06600 Ciudad de México, CDMX</div>
+                <div class="fecha-container">
+                    <span class="field-label">Fecha</span>
+                    <input type="text" class="line-input">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box" style="margin-top: 0;">
+        <div class="box-title left-aligned">Datos personales</div>
+        <div class="form-row">
+            <div class="field" style="flex: 3;"><span class="field-label">Nombre completo</span><input type="text" class="line-input"></div>
+            <div class="field" style="flex: 1;"><span class="field-label">Expediente</span><input type="text" class="line-input"></div>
+        </div>
+        <div class="form-row">
+            <div class="field" style="flex: 0.5;"><span class="field-label">Edad</span><input type="text" class="line-input"></div>
+            <div class="field chk-group" style="flex: 1;">
+                <span class="field-label">Sexo</span>
+                <label class="chk-label"><input type="radio" name="sexo"> Fem</label>
+                <label class="chk-label"><input type="radio" name="sexo"> Mas</label>
+            </div>
+            <div class="field chk-group" style="flex: 1.2;">
+                <span class="field-label">Edo. civil</span>
+                <label class="chk-label"><input type="radio" name="civil"> Soltero</label>
+                <label class="chk-label"><input type="radio" name="civil"> Casado</label>
+            </div>
+            <div class="field" style="flex: 1.5;"><span class="field-label">Ocupación</span><input type="text" class="line-input"></div>
+            <div class="field" style="flex: 0.5;"><span class="field-label">F/N</span><input type="text" class="line-input"></div>
+        </div>
+        <div class="form-row">
+            <div class="field" style="flex: 1;"><span class="field-label">Teléfono</span><input type="text" class="line-input"></div>
+            <div class="field" style="flex: 2;"><span class="field-label">Dirección</span><input type="text" class="line-input"></div>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="box">
+            <div class="box-title left-aligned">Motivos de consulta</div>
+            <div class="blank-lines">
+                <input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input">
+            </div>
+        </div>
+        <div class="box">
+            <div class="box-title left-aligned">Qx o Tx previos</div>
+            <div class="blank-lines">
+                <input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-60-40">
+        <div class="box" style="padding: 0; overflow: hidden; border: 2px solid var(--utc-blue);">
+            <div class="full-width-title">Antecedentes patológicos heredofamiliares</div>
+            <div class="table-responsive">
+                <table>
+                    <tr>
+                        <th class="text-left" style="width: 40%; border-top: none; border-left: none;">Enfermedades</th>
+                        <th style="border-top: none;">Madre</th><th style="border-top: none;">Padre</th>
+                        <th style="border-top: none;">Aa Mat</th><th style="border-top: none;">Ao Mat</th>
+                        <th style="border-top: none;">Aa Pat</th><th style="border-top: none; border-right: none;">Ao Pat</th>
+                    </tr>
+                    <tr><td class="text-left" style="border-left: none;">Diabetes Mellitus</td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td style="border-right: none;"><input type="checkbox" class="cell-chk"></td></tr>
+                    <tr><td class="text-left" style="border-left: none;">Obesidad o sobrepeso</td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td style="border-right: none;"><input type="checkbox" class="cell-chk"></td></tr>
+                    <tr><td class="text-left" style="border-left: none;">Cáncer</td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td style="border-right: none;"><input type="checkbox" class="cell-chk"></td></tr>
+                    <tr><td class="text-left" style="border-left: none;">Hipertensión</td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td style="border-right: none;"><input type="checkbox" class="cell-chk"></td></tr>
+                    <tr><td class="text-left" style="border-left: none;">Enfermedades Renales</td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td style="border-right: none;"><input type="checkbox" class="cell-chk"></td></tr>
+                    <tr><td class="text-left" style="border-left: none;">Enfermedades Endocrinas</td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td style="border-right: none;"><input type="checkbox" class="cell-chk"></td></tr>
+                    <tr><td class="text-left" style="border-left: none;">Enfermedad Tiroidea</td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td style="border-right: none;"><input type="checkbox" class="cell-chk"></td></tr>
+                    <tr><td class="text-left" style="border-left: none;">Enfermedades Psiquiátricas</td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td style="border-right: none;"><input type="checkbox" class="cell-chk"></td></tr>
+                    <tr><td class="text-left" style="border-left: none;">Enfermedades Neurológicas</td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td style="border-right: none;"><input type="checkbox" class="cell-chk"></td></tr>
+                    <tr><td class="text-left" style="border-left: none;">Enfermedades Autoinmunes</td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td style="border-right: none;"><input type="checkbox" class="cell-chk"></td></tr>
+                    <tr><td class="text-left" style="border-left: none;">Enfermedades Gastrointestinales</td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td><input type="checkbox" class="cell-chk"></td><td style="border-right: none;"><input type="checkbox" class="cell-chk"></td></tr>
+                    <tr><td class="text-left" style="border-left: none; border-bottom: none; display: flex; align-items:flex-end; gap: 5px; flex-wrap: wrap; padding: 2px 4px;">Otras: <input type="text" class="line-input"></td><td style="border-bottom: none;"><input type="checkbox" class="cell-chk"></td><td style="border-bottom: none;"><input type="checkbox" class="cell-chk"></td><td style="border-bottom: none;"><input type="checkbox" class="cell-chk"></td><td style="border-bottom: none;"><input type="checkbox" class="cell-chk"></td><td style="border-bottom: none;"><input type="checkbox" class="cell-chk"></td><td style="border-right: none; border-bottom:none;"><input type="checkbox" class="cell-chk"></td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="box" style="padding-top: 15px;">
+            <div class="box-title left-aligned">Antecedentes patológicos personales</div>
+            <div class="field-label" style="margin-bottom: 3px;">Enfermedades</div>
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+                <label class="chk-label" style="font-weight: normal;"><input type="checkbox"> Diabetes Mellitus</label>
+                <label class="chk-label" style="font-weight: normal;"><input type="checkbox"> Obesidad o Sobrepeso</label>
+                <label class="chk-label" style="font-weight: normal;"><input type="checkbox"> Cáncer</label>
+                <label class="chk-label" style="font-weight: normal;"><input type="checkbox"> Hipertensión</label>
+                <label class="chk-label" style="font-weight: normal;"><input type="checkbox"> Enfermedades Renales</label>
+                <label class="chk-label" style="font-weight: normal;"><input type="checkbox"> Enfermedades Endocrinas</label>
+                <label class="chk-label" style="font-weight: normal;"><input type="checkbox"> Enfermedad Tiroidea</label>
+                <label class="chk-label" style="font-weight: normal;"><input type="checkbox"> Enfermedades Psiquiátricas</label>
+                <label class="chk-label" style="font-weight: normal;"><input type="checkbox"> Enfermedades Neurológicas</label>
+                <label class="chk-label" style="font-weight: normal;"><input type="checkbox"> Enfermedades Autoinmunes</label>
+                <label class="chk-label" style="font-weight: normal;"><input type="checkbox"> Enfermedades Gastrointestinales</label>
+                <label class="chk-label" style="display:flex; font-weight: normal; flex-wrap: wrap;">Otras: <input type="text" class="line-input" style="margin-left: 5px; flex-grow: 1;"></label>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-container">
+        <div class="box" style="flex: 1.1; padding: 0; overflow: hidden; margin-top: 0; margin-bottom: 0;">
+            <div class="full-width-title">Sintomatología</div>
+            <div class="table-responsive">
+                <table style="margin-top: 0;">
+                    <tr>
+                        <th class="text-left" style="width: 60%; border-top: none; border-left:none;">Enfermedades</th>
+                        <th style="border-top: none; border-right: none;">Frecuencia/Cant</th>
+                    </tr>
+                    <tr><td class="text-left" style="border-left:none;"><label class="chk-label"><input type="checkbox"> Gastritis</label></td><td style="border-right: none;"><input type="text" class="table-input"></td></tr>
+                    <tr><td class="text-left" style="border-left:none;"><label class="chk-label"><input type="checkbox"> Colitis</label></td><td style="border-right: none;"><input type="text" class="table-input"></td></tr>
+                    <tr><td class="text-left" style="border-left:none;"><label class="chk-label"><input type="checkbox"> Reflujo gastroesofágico</label></td><td style="border-right: none;"><input type="text" class="table-input"></td></tr>
+                    <tr><td class="text-left" style="border-left:none;"><label class="chk-label"><input type="checkbox"> Diarrea</label></td><td style="border-right: none;"><input type="text" class="table-input"></td></tr>
+                    <tr><td class="text-left" style="border-left:none;"><label class="chk-label"><input type="checkbox"> Estreñimiento</label></td><td style="border-right: none;"><input type="text" class="table-input"></td></tr>
+                    <tr><td class="text-left" style="border-left:none;"><label class="chk-label"><input type="checkbox"> Vómito</label></td><td style="border-right: none;"><input type="text" class="table-input"></td></tr>
+                    <tr><td class="text-left" style="border-left:none;"><label class="chk-label"><input type="checkbox"> Náuseas</label></td><td style="border-right: none;"><input type="text" class="table-input"></td></tr>
+                    <tr><td class="text-left" style="border-left:none;"><label class="chk-label"><input type="checkbox"> Disfagia</label></td><td style="border-right: none;"><input type="text" class="table-input"></td></tr>
+                    <tr><td class="text-left" style="border-left:none;"><label class="chk-label"><input type="checkbox"> Hiperfagia</label></td><td style="border-right: none;"><input type="text" class="table-input"></td></tr>
+                    <tr><td class="text-left" style="border-left:none;"><label class="chk-label"><input type="checkbox"> Flatulencias</label></td><td style="border-right: none;"><input type="text" class="table-input"></td></tr>
+                    <tr><td class="text-left" style="border-left:none;"><label class="chk-label"><input type="checkbox"> Distensión abdominal</label></td><td style="border-right: none;"><input type="text" class="table-input"></td></tr>
+                    <tr><td class="text-left" style="border-left:none; border-bottom: none;"><label class="chk-label"><input type="checkbox"> Hiporexia</label></td><td style="border-right: none; border-bottom: none;"><input type="text" class="table-input"></td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 15px;">
+            <div class="box" style="margin: 0; padding-top: 15px;">
+                <div class="box-title">Escala de Bristol</div>
+                <div class="bristol-container">
+                    <img src="Escala_Bristol.png" alt="Escala de Bristol" class="bristol-img">
+                    <div class="bristol-selectors">
+                        <input type="radio" name="escala-bristol" value="1">
+                        <input type="radio" name="escala-bristol" value="2">
+                        <input type="radio" name="escala-bristol" value="3">
+                        <input type="radio" name="escala-bristol" value="4">
+                        <input type="radio" name="escala-bristol" value="5">
+                        <input type="radio" name="escala-bristol" value="6">
+                        <input type="radio" name="escala-bristol" value="7">
+                    </div>
+                </div>
+            </div>
+
+            <div class="box" style="margin: 0; padding-top: 15px; flex-grow: 1;">
+                <div class="box-title">Diagnósticos médicos</div>
+                <div class="blank-lines">
+                    <input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input">
+                </div>
+            </div>
+        </div>
+
+        <div style="flex: 1.3; display: flex; flex-direction: column; gap: 15px;">
+            <div class="box" style="margin: 0; padding: 0; overflow: hidden;">
+                <div class="full-width-title">Antecedentes personales no patológicos</div>
+                <div class="table-responsive">
+                    <table style="border: none;">
+                        <tr>
+                            <th style="border-top: none; border-left:none;"></th>
+                            <th style="border-top: none;">Frecuencia</th>
+                            <th style="border-top: none; border-right: none;">Cantidad</th>
+                        </tr>
+                        <tr><td class="text-left" style="border-left:none;"><label class="chk-label"><input type="checkbox"> Hábito tabáquico</label></td><td><input type="text" class="table-input"></td><td style="border-right: none;"><input type="text" class="table-input"></td></tr>
+                        <tr><td class="text-left" style="border-left:none;"><label class="chk-label"><input type="checkbox"> Consumo de alcohol</label></td><td><input type="text" class="table-input"></td><td style="border-right: none;"><input type="text" class="table-input"></td></tr>
+                        <tr><td class="text-left" style="border-left:none; border-bottom: none;"><label class="chk-label"><input type="checkbox"> Consumo de drogas</label></td><td style="border-bottom:none;"><input type="text" class="table-input"></td><td style="border-right: none; border-bottom:none;"><input type="text" class="table-input"></td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="box" style="margin: 0; padding: 0; overflow: hidden; display: flex; flex-direction: column; flex-grow: 1;">
+                <div style="background-color: var(--utc-blue); color: white; display: flex; font-weight: bold; font-size: 12px; padding: 4px 0; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                    <div style="flex: 2; text-align: center;">Medicamentos</div>
+                    <div style="flex: 1; text-align: center;">Dosis</div>
+                </div>
+                <div style="padding: 10px; display: flex; gap: 10px; flex-grow: 1;">
+                    <div class="blank-lines" style="flex: 2; margin-top: 0;">
+                        <input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input">
+                    </div>
+                    <div class="blank-lines" style="flex: 1; margin-top: 0;">
+                        <input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input"><input type="text" class="line-input">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-2" style="margin-top: 15px;">
+        <div class="box" style="margin: 0; padding-top: 15px;">
+            <div class="box-title">Ejercicio</div>
+
+            <div class="form-row">
+                <div class="field chk-group" style="flex: 1;">
+                    <span class="field-label">Realiza ejercicio</span>
+                    <label class="chk-label"><input type="radio" name="ejercicio"> No</label>
+                    <label class="chk-label"><input type="radio" name="ejercicio"> Sí</label>
+                </div>
+                <div class="field chk-group" style="flex: 1;">
+                    <label class="chk-label"><input type="radio" name="tipo-ejercicio"> Aeróbico</label>
+                    <label class="chk-label"><input type="radio" name="tipo-ejercicio"> Anaeróbico</label>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="field"><span class="field-label">¿Cuál?</span><input type="text" class="line-input"></div>
+            </div>
+
+            <div class="form-row">
+                <div class="field" style="flex: 1;"><span class="field-label">Frecuencia</span><input type="text" class="line-input"></div>
+                <div class="field" style="flex: 1;"><span class="field-label">Intensidad</span><input type="text" class="line-input"></div>
+            </div>
+
+            <div class="form-row">
+                <div class="field" style="flex: 1;"><span class="field-label">Tiempo</span><input type="text" class="line-input"></div>
+                <div class="field" style="flex: 1;"><span class="field-label">Volumen</span><input type="text" class="line-input"></div>
+            </div>
+
+            <div class="form-row" style="margin-bottom: 0;">
+                <div class="field"><span class="field-label">Progresión</span><input type="text" class="line-input"></div>
+            </div>
+        </div>
+
+        <div class="box" style="margin: 0; padding-top: 15px;">
+            <div class="box-title">Antecedentes gineco-obstétricos</div>
+
+            <div class="form-row">
+                <div class="field" style="flex: 0.5;"><span class="field-label">G</span><input type="text" class="line-input"></div>
+                <div class="field-label" style="margin: 0 5px;">de las cuales fueron:</div>
+                <div class="field" style="flex: 0.5;"><span class="field-label">P</span><input type="text" class="line-input"></div>
+                <div class="field" style="flex: 0.5;"><span class="field-label">C</span><input type="text" class="line-input"></div>
+                <div class="field" style="flex: 0.5;"><span class="field-label">A</span><input type="text" class="line-input"></div>
+            </div>
+
+            <div class="form-row" style="margin-top: 10px;">
+                <div class="field" style="flex: 1;"><span class="field-label">FUM</span><input type="text" class="line-input"></div>
+                <div class="field chk-group" style="flex: 1;">
+                    <span class="field-label">Embarazo</span>
+                    <label class="chk-label"><input type="radio" name="embarazo"> No</label>
+                    <label class="chk-label"><input type="radio" name="embarazo"> Sí</label>
+                </div>
+                <div class="field" style="flex: 0.5;"><span class="field-label">SDG</span><input type="text" class="line-input"></div>
+            </div>
+
+            <div class="form-row" style="margin-top: 10px;">
+                <div class="field chk-group">
+                    <span class="field-label">Remplazo hormonal</span>
+                    <label class="chk-label"><input type="radio" name="remplazo"> No</label>
+                    <label class="chk-label"><input type="radio" name="remplazo"> Sí</label>
+                </div>
+                <input type="text" class="line-input" style="margin-left: 10px;">
+            </div>
+
+            <div class="form-row" style="margin-bottom: 0;">
+                <div class="field chk-group">
+                    <span class="field-label">Anticonceptivos</span>
+                    <label class="chk-label"><input type="radio" name="anticonceptivos"> No</label>
+                    <label class="chk-label"><input type="radio" name="anticonceptivos"> Sí</label>
+                </div>
+                <input type="text" class="line-input" style="margin-left: 10px;">
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>
+            ESA: Exploración sin alteraciones; N/A: No Aplica; PN: Preguntado y negado; ✓: Adecuado.<br>
+            G: Gestas; P: Partos; C: Cesárea; A: Abortos. FUM: Fecha de última menstruación. SDG: Semanas de Gestación
+        </p>
+        <div class="page-num">1</div>
+    </div>
+
+</div>
+
+</body>
+</html>
